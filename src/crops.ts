@@ -19,7 +19,7 @@ export let Crops: Crop[] = [
   {
     name: 'potato',
     cost: 15,
-    revenue: 22,
+    revenue: 24,
     time_to_ripe: 20,
     time_to_death: 35,
     frame: 1
