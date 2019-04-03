@@ -4,15 +4,15 @@ export class Farm extends Phaser.GameObjects.GameObject {
   constructor(scene: Phaser.Scene) {
     super(scene, 'farm');
 
-    var farm = scene.add.group();
+    const farm = scene.add.group();
 
     for (var x = 0; x < 5; x++) {
       for (var y = 0; y < 7; y++) {
-        var offsetX = x * 85 + 67;
-        var offsetY = y * 85 + 64;
+        const offsetX = x * 85 + 67;
+        const offsetY = y * 85 + 64;
 
-        var tile = new Land(scene, offsetX, offsetY);
-        farm.add(tile, true);
+        const tile = new Land(scene, offsetX, offsetY);
+        farm.add(tile);
       }
     }
   }
