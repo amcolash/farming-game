@@ -1,0 +1,25 @@
+{
+  "name": "farming",
+  "version": "1.0.0",
+  "description": "A simple html5 farming game",
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack-dev-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "farm",
+    "game"
+  ],
+  "author": "Andrew McOlash",
+  "license": "MIT",
+  "devDependencies": {
+    "phaser": "^3.16.2",
+    "phaser3-docs": "github:photonstorm/phaser3-docs",
+    "ts-loader": "^5.3.3",
+    "typescript": "^3.4.1",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0",
+    "webpack-dev-server": "^3.2.1"
+  }
+}
