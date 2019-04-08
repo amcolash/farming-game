@@ -1,5 +1,7 @@
 import "phaser";
 import { FarmScene } from './farmScene';
+import { HUDScene } from './hudScene';
+import { LoadingScene } from './loadingScene';
 import { ShopScene } from './shopScene';
 
 const config: GameConfig = {
@@ -8,7 +10,7 @@ const config: GameConfig = {
   height: 720,
   parent: 'game',
   backgroundColor: '#000000',
-  scene: [FarmScene, ShopScene],
+  scene: [LoadingScene, FarmScene, HUDScene, ShopScene],
   physics: {
     default: 'arcade',
     arcade: {

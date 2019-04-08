@@ -1,8 +1,8 @@
-import { HUD } from './hud';
+import { Camera } from './camera';
 import { Farm } from './farm';
 
 export class FarmScene extends Phaser.Scene {
-  hud: HUD;
+  camera: Camera;
   farm: Farm;
 
   constructor() {
@@ -12,9 +12,13 @@ export class FarmScene extends Phaser.Scene {
   preload(): void {
     this.load.spritesheet('crops', 'assets/images/crops.png', { frameWidth: 32, frameHeight: 32 });
   }
-
+  
   create(): void {
-    this.hud = new HUD(this, false);
     this.farm = new Farm(this);
+    this.camera = new Camera(this, 0, 0, 'crops', 1);
+  }
+
+  update(): void {
+    this.camera.update();
   }
 }

@@ -14,6 +14,7 @@ export class Land extends Phaser.GameObjects.GameObject {
   life: number;
   crop: Crop;
 
+  // TODO: Make this a group
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, 'land');
     scene.sys.updateList.add(this);
@@ -22,12 +23,10 @@ export class Land extends Phaser.GameObjects.GameObject {
     this.land = LandState.EMPTY;
 
     this.sprite = scene.add.sprite(x, y, 'crops');
-    this.sprite.setScale(2.5);
-
     this.sprite.setInteractive({ useHandCursor: true });
     this.sprite.on('pointerdown', this.handleClick.bind(this));
 
-    this.bar = scene.add.rectangle(x - 40, y - 38, 0, 4, 0x00ee00);
+    this.bar = scene.add.rectangle(x - 16, y - 16, 0, 2, 0x00ee00);
   }
 
   preUpdate(time: number, delta: number) {
@@ -39,10 +38,10 @@ export class Land extends Phaser.GameObjects.GameObject {
       } else {
         if (this.life > 0) {
           this.bar.fillColor = 0x00ee00;
-          this.bar.width = (1 - (this.life / this.crop.time_to_ripe)) * 80;
+          this.bar.width = (1 - (this.life / this.crop.time_to_ripe)) * 32;
         } else {
           this.bar.fillColor = 0xee0000;
-          this.bar.width = (1 - (-this.life / this.crop.time_to_death)) * 80;
+          this.bar.width = (1 - (-this.life / this.crop.time_to_death)) * 32;
         }
       }
     } else {

@@ -1,4 +1,3 @@
-import { HUD } from './hud';
 import { Shop } from './shop';
 
 export class ShopScene extends Phaser.Scene {
@@ -11,7 +10,6 @@ export class ShopScene extends Phaser.Scene {
   }
 
   create(): void {
-    new HUD(this, true);
     new Shop(this);
   }
 }
