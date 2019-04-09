@@ -1,6 +1,6 @@
 import { Crop, Crops } from './crops';
 
-enum LandState {
+export enum LandState {
   EMPTY,
   PLOWED,
   PLANTED

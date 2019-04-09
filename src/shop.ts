@@ -1,4 +1,5 @@
 import { Crops } from './crops';
+import { HUDScene } from './hudScene';
 
 export class Shop extends Phaser.GameObjects.GameObject {
   constructor(scene: Phaser.Scene) {
@@ -23,7 +24,6 @@ export class Shop extends Phaser.GameObjects.GameObject {
 
   selectCrop(index: number) {
     this.scene.game.registry.set('currentCrop', index);
-    this.scene.scene.sleep('ShopScene');
-    this.scene.scene.run('FarmScene');
+    (this.scene.game.scene.getScene('HUDScene') as HUDScene).toggleShop();
   }
 }

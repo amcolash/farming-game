@@ -1,13 +1,17 @@
 export class Camera extends Phaser.Physics.Arcade.Image {
+  camera: Phaser.Cameras.Scene2D.Camera;
   cursors: Phaser.Input.Keyboard.CursorKeys;
   readonly speed: number = 200;
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
     super(scene, x, y, texture, frame);
     scene.physics.add.existing(this);
-    scene.cameras.main.startFollow(this);
 
     this.cursors = scene.input.keyboard.createCursorKeys();
+    this.camera = scene.cameras.main;
+    this.camera.startFollow(this, true, 0.1, 0.1);
+    this.camera.setZoom(1.5);
+
     this.setCollideWorldBounds(true);
   }
 

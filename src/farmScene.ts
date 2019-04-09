@@ -8,10 +8,6 @@ export class FarmScene extends Phaser.Scene {
   constructor() {
     super('FarmScene');
   }
-
-  preload(): void {
-    this.load.spritesheet('crops', 'assets/images/crops.png', { frameWidth: 32, frameHeight: 32 });
-  }
   
   create(): void {
     this.farm = new Farm(this);

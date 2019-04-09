@@ -1,4 +1,4 @@
-import { Land } from './land';
+import { Land, LandState } from './land';
 
 export class Farm extends Phaser.GameObjects.GameObject {
   readonly dimensionX: number = 10;
@@ -13,12 +13,7 @@ export class Farm extends Phaser.GameObjects.GameObject {
     const width = this.dimensionX * 2 * this.tileSize;
     const height = this.dimensionY * 2 * this.tileSize;
 
-    this.scene.physics.world.setBounds(
-      xPos + 5 * this.tileSize,
-      yPos + 9 * this.tileSize,
-      width - 10 * this.tileSize,
-      height - 16 * this.tileSize
-    );
+    this.scene.physics.world.setBounds(xPos, yPos, width, height);
 
     const farm = scene.add.group();
 
@@ -28,6 +23,7 @@ export class Farm extends Phaser.GameObjects.GameObject {
         const offsetY = y * this.tileSize;
 
         const tile = new Land(scene, offsetX, offsetY);
+        if (x === 0 && y === 0) tile.land = LandState.PLOWED;
         farm.add(tile);
       }
     }
