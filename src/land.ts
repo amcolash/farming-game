@@ -33,17 +33,17 @@ export class Land extends Phaser.GameObjects.GameObject {
   preUpdate(time: number, delta: number) {
     if (this.crop != null) {
       this.life -= ((delta / 1000) * this.scene.game.registry.get('speed'));
-      if (this.life < -this.crop.time_to_death) {
+      if (this.life < -this.crop.timeToDeath) {
         this.crop = null;
         this.land = LandState.EMPTY;
       } else {
         if (this.life > 0) {
           this.bar.fillColor = 0x00ee00;
-          this.bar.width = (1 - (this.life / this.crop.time_to_ripe)) * 32;
+          this.bar.width = (1 - (this.life / this.crop.timeToRipe)) * 32;
         } else {
           this.land = LandState.READY;
           this.bar.fillColor = 0xee0000;
-          this.bar.width = (1 - (-this.life / this.crop.time_to_death)) * 32;
+          this.bar.width = (1 - (-this.life / this.crop.timeToDeath)) * 32;
         }
       }
     } else {
@@ -94,7 +94,7 @@ export class Land extends Phaser.GameObjects.GameObject {
         if (money - crop.cost >= 0) {
           this.scene.game.registry.set('money', money - crop.cost);
           this.crop = crop;
-          this.life = crop.time_to_ripe;
+          this.life = crop.timeToRipe;
           this.land = LandState.PLANTED;
         }
         break;

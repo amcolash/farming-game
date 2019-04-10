@@ -24,6 +24,8 @@ export class Farmer extends Phaser.GameObjects.Container {
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setVelocity(0);
     
+    this.registry.set('currentCrop', this.getBestCrop());
+    
     var tile = null;
     if (this.farm.ready.getLength() > 0) {
       tile = this.getBestTile(LandState.READY);
@@ -42,6 +44,16 @@ export class Farmer extends Phaser.GameObjects.Container {
         this.scene.physics.moveTo(this, tile.sprite.x, tile.sprite.y, 60 * this.registry.get('speed'));
       }
     }
+  }
+
+  getBestCrop(): number {
+    const money = this.registry.get('money');
+    let best = 0;
+    for (var i = 0; i < Crops.length; i++) {
+      if (Crops[i].revenue > best && money - 3 * (Crops[i].cost + 5) >= 200) best = i;
+    }
+
+    return best;
   }
 
   getBestTile(land: LandState): Land {
