@@ -26,7 +26,7 @@ export class Farmer extends Phaser.GameObjects.Container {
     body.setVelocity(0);
     
     if (this.wait > 0) {
-      this.wait -= delta;
+      this.wait -= delta * this.registry.get('speed');
       return;
     }
 
