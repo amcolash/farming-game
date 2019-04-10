@@ -5,8 +5,17 @@ export class Farm extends Phaser.GameObjects.GameObject {
   readonly dimensionY: number = 10;
   readonly tileSize: number = 32;
 
+  farm: Land[][];
+
+  empty: Phaser.GameObjects.Group;
+  plowed: Phaser.GameObjects.Group;
+  planted: Phaser.GameObjects.Group;
+  ready: Phaser.GameObjects.Group;
+
   constructor(scene: Phaser.Scene) {
     super(scene, 'farm');
+
+    scene.sys.updateList.add(this);
 
     const xPos = -this.dimensionX * this.tileSize - (this.tileSize / 2);
     const yPos = -this.dimensionY * this.tileSize - (this.tileSize / 2);
@@ -15,20 +24,61 @@ export class Farm extends Phaser.GameObjects.GameObject {
 
     this.scene.physics.world.setBounds(xPos, yPos, width, height);
 
-    const farm = scene.add.group();
+    this.empty = scene.add.group();
+    this.plowed = scene.add.group();
+    this.planted = scene.add.group();
+    this.ready = scene.add.group();
+
+    this.farm = [];
 
     for (var x = -this.dimensionX; x < this.dimensionX; x++) {
+      this.farm[x + this.dimensionX] = [];
       for (var y = -this.dimensionY; y < this.dimensionY; y++) {
         const offsetX = x * this.tileSize;
         const offsetY = y * this.tileSize;
 
         const tile = new Land(scene, offsetX, offsetY);
-        if (x === 0 && y === 0) tile.land = LandState.PLOWED;
-        farm.add(tile);
+        // if (x === 0 && y === 0) tile.land = LandState.PLOWED;
+        this.empty.add(tile);
+        this.farm[x + this.dimensionX][y + this.dimensionY] = tile;
       }
     }
 
     const grid = new Phaser.GameObjects.Grid(scene, -this.tileSize / 2, -this.tileSize / 2, width, height, this.tileSize, this.tileSize, 0x000000, 0, 0xffffff, 0.1);
-    farm.add(grid, true);
+    scene.add.existing(grid);
+  }
+
+  preUpdate(): void {
+    for (var x = 0; x < this.farm.length; x++) {
+      for (var y = 0; y < this.farm[x].length; y++) {
+        const tile = this.farm[x][y];
+        switch(tile.land) {
+          case LandState.EMPTY:
+            if (!this.empty.contains(tile)) this.empty.add(tile);
+            this.plowed.remove(tile);
+            this.planted.remove(tile);
+            this.ready.remove(tile);
+            break;
+          case LandState.PLOWED:
+            this.empty.remove(tile);
+            if (!this.plowed.contains(tile)) this.plowed.add(tile);
+            this.planted.remove(tile);
+            this.ready.remove(tile);
+            break;
+          case LandState.PLANTED:
+            this.empty.remove(tile);
+            this.plowed.remove(tile);
+            if (!this.planted.contains(tile)) this.planted.add(tile);
+            this.ready.remove(tile);
+            break;
+          case LandState.READY:
+            this.empty.remove(tile);
+            this.plowed.remove(tile);
+            this.planted.remove(tile);
+            if (!this.ready.contains(tile)) this.ready.add(tile);
+            break;
+        }
+      }
+    }
   }
 }

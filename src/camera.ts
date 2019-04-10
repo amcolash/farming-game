@@ -3,8 +3,8 @@ export class Camera extends Phaser.Physics.Arcade.Image {
   cursors: Phaser.Input.Keyboard.CursorKeys;
   readonly speed: number = 200;
 
-  constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
-    super(scene, x, y, texture, frame);
+  constructor(scene: Phaser.Scene, x: number, y: number) {
+    super(scene, x, y, 'crops', 1);
     scene.physics.add.existing(this);
 
     this.cursors = scene.input.keyboard.createCursorKeys();

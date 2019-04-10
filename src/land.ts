@@ -3,7 +3,8 @@ import { Crop, Crops } from './crops';
 export enum LandState {
   EMPTY,
   PLOWED,
-  PLANTED
+  PLANTED,
+  READY
 }
 
 export class Land extends Phaser.GameObjects.GameObject {
@@ -40,6 +41,7 @@ export class Land extends Phaser.GameObjects.GameObject {
           this.bar.fillColor = 0x00ee00;
           this.bar.width = (1 - (this.life / this.crop.time_to_ripe)) * 32;
         } else {
+          this.land = LandState.READY;
           this.bar.fillColor = 0xee0000;
           this.bar.width = (1 - (-this.life / this.crop.time_to_death)) * 32;
         }
@@ -58,8 +60,10 @@ export class Land extends Phaser.GameObjects.GameObject {
         frame = 18;
         break;
       case LandState.PLANTED:
-        if (this.life >= 0) frame = this.crop.frame + 6;
-        else frame = this.crop.frame + 12;
+        frame = this.crop.frame + 6;
+        break;
+      case LandState.READY:
+        frame = this.crop.frame + 12;
         break;
       default:
         frame = 19;
@@ -89,11 +93,11 @@ export class Land extends Phaser.GameObjects.GameObject {
         }
         break;
       case LandState.PLANTED:
-        if (this.life < 0) {
-          this.scene.game.registry.set('money', money + this.crop.revenue);
-          this.crop = null;
-          this.land = LandState.EMPTY;
-        }
+        break;
+      case LandState.READY:
+        this.scene.game.registry.set('money', money + this.crop.revenue);
+        this.crop = null;
+        this.land = LandState.EMPTY;
         break;
     }
   }
