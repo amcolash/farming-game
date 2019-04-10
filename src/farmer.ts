@@ -40,7 +40,6 @@ export class Farmer extends Phaser.GameObjects.Container {
         tile.handleClick();
       } else {
         this.scene.physics.moveTo(this, tile.sprite.x, tile.sprite.y, 60 * this.registry.get('speed'));
-        if (tile.land == LandState.PLANTED) console.log('moving to planted', tile.sprite.x, tile.sprite.y)
       }
     }
   }
@@ -99,6 +98,8 @@ export class Farmer extends Phaser.GameObjects.Container {
         arr = this.farm.empty.getChildren();
         break;
     }
+
+    this.scene.game.events.emit('planted', this.farm.planted.getLength() + this.farm.ready.getLength());
 
     var score = 9999999999;
     var best = null;

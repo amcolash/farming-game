@@ -5,9 +5,10 @@ export class HUDScene extends Phaser.Scene {
   data: Phaser.Data.DataManager;
   isShop: boolean;
 
-  money: Phaser.GameObjects.Text;
   button: TextButton;
   crop: Phaser.GameObjects.Sprite;
+  money: Phaser.GameObjects.Text;
+  planted: Phaser.GameObjects.Text;
   
   constructor() {
     super('HUDScene');
@@ -25,6 +26,12 @@ export class HUDScene extends Phaser.Scene {
     this.money = this.add.text(width - 120, height - 50, '$', { fontSize: 24 });
     this.crop = this.add.sprite(width / 2 - 8, height - 50, 'crops', Crops[this.data.get('currentCrop')].frame);
     this.crop.setScale(2);
+
+    new TextButton(this, width / 2 - 32, height - 90, "-", () => this.game.events.emit('zoom', -1));
+    new TextButton(this, width / 2 - 4, height - 90, "+", () => this.game.events.emit('zoom', 1));
+
+    this.planted = this.add.text(width -120, height - 90, 'Planted: 0');
+    this.game.events.addListener('planted', value => this.planted.setText('Planted: ' + value))
   }
 
   update(time: number, delta: number): void {

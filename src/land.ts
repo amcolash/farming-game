@@ -74,6 +74,12 @@ export class Land extends Phaser.GameObjects.GameObject {
   }
 
   handleClick() {
+    if (this.scene.game.input.activePointer.rightButtonDown()) {
+      this.crop = null;
+      this.land = LandState.EMPTY;
+      return;
+    }
+
     const money = this.scene.game.registry.get('money');
     const crop = Crops[this.scene.game.registry.get('currentCrop')];
 
