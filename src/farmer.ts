@@ -118,7 +118,7 @@ export class Farmer extends Phaser.GameObjects.Container {
     var score = this.distance(tile);
 
     if (tile.land == LandState.READY) {
-      score = ((score / 400) * score + tile.life * 500);
+      score = ((score / 400) * score + tile.life * 500 - tile.crop.revenue * 500);
     } else if (tile.land == LandState.PLANTED) {
       score = (score + tile.life * 5000);
     }
