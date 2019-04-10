@@ -7,6 +7,7 @@ export class Farmer extends Phaser.GameObjects.Container {
 
   farm: Farm;
   registry: Phaser.Data.DataManager;
+  wait: number;
 
   constructor(scene: Phaser.Scene, x: number, y: number, farm: Farm) {
     super(scene, x, y);
@@ -20,12 +21,17 @@ export class Farmer extends Phaser.GameObjects.Container {
     this.registry = scene.game.registry;
   }
 
-  preUpdate() {
+  preUpdate(time: number, delta: number) {
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setVelocity(0);
     
+    if (this.wait > 0) {
+      this.wait -= delta;
+      return;
+    }
+
     this.registry.set('currentCrop', this.getBestCrop());
-    
+
     var tile = null;
     if (this.farm.ready.getLength() > 0) {
       tile = this.getBestTile(LandState.READY);
@@ -39,6 +45,20 @@ export class Farmer extends Phaser.GameObjects.Container {
 
     if (tile !== null) {
       if (this.distance(tile) < 200) {
+        switch(tile.land) {
+          case LandState.EMPTY:
+            this.wait = 100;
+            break;
+          case LandState.PLOWED:
+            this.wait = 50;
+            break;
+          case LandState.PLANTED:
+            this.wait = 200;
+            break;
+          case LandState.READY:
+            this.wait = 100;
+            break;
+        }
         tile.handleClick();
       } else {
         this.scene.physics.moveTo(this, tile.sprite.x, tile.sprite.y, 60 * this.registry.get('speed'));
