@@ -27,11 +27,14 @@ export class HUDScene extends Phaser.Scene {
     this.crop = this.add.sprite(width / 2 - 8, height - 50, 'crops', Crops[this.data.get('currentCrop')].frame);
     this.crop.setScale(2);
 
-    new TextButton(this, width / 2 - 32, height - 90, "-", () => this.game.events.emit('zoom', -1));
-    new TextButton(this, width / 2 - 4, height - 90, "+", () => this.game.events.emit('zoom', 1));
+    new TextButton(this, width / 2 - 32, height - 100, "<", () => this.game.registry.set('speed', Phaser.Math.Clamp(this.game.registry.get('speed') as number + -0.5, 0.5, 30)));
+    new TextButton(this, width / 2 - 4, height - 100, ">", () => this.game.registry.set('speed', Phaser.Math.Clamp(this.game.registry.get('speed') as number + 0.5, 0.5, 30)));
 
-    this.planted = this.add.text(width -120, height - 90, 'Planted: 0');
-    this.game.events.addListener('planted', value => this.planted.setText('Planted: ' + value))
+    new TextButton(this, width / 2 - 32, height - 80, "-", () => this.game.events.emit('zoom', -1));
+    new TextButton(this, width / 2 - 4, height - 80, "+", () => this.game.events.emit('zoom', 1));
+
+    this.planted = this.add.text(width -120, height - 95, 'Planted: \nSpeed: ' + this.registry.get('speed'));
+    this.game.events.addListener('planted', value => this.planted.setText('Planted: ' + value +'\nSpeed: ' + this.registry.get('speed')));
   }
 
   update(time: number, delta: number): void {

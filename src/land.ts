@@ -9,6 +9,7 @@ export enum LandState {
 
 export class Land extends Phaser.GameObjects.GameObject {
   sprite: Phaser.GameObjects.Sprite;
+  id: string;
   bar: Phaser.GameObjects.Rectangle;
 
   land: LandState;
@@ -27,6 +28,7 @@ export class Land extends Phaser.GameObjects.GameObject {
     this.sprite.setInteractive({ useHandCursor: true });
     this.sprite.on('pointerdown', this.handleClick.bind(this));
 
+    this.id = x.toString() + y.toString();
     this.bar = scene.add.rectangle(x - 16, y - 16, 0, 2, 0x00ee00);
   }
 

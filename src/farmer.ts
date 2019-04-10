@@ -101,7 +101,8 @@ export class Farmer extends Phaser.GameObjects.Container {
   }
 
   distance(tile: Land) {
-    return Phaser.Math.Distance.Squared(this.x, this.y, tile.sprite.x, tile.sprite.y);
+    // Add random to try and prevent "on the edge" cases
+    return Phaser.Math.Distance.Squared(this.x, this.y, tile.sprite.x, tile.sprite.y) + Math.random();
   }
 
   canAffordPlow(): boolean {
