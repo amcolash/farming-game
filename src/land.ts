@@ -32,7 +32,7 @@ export class Land extends Phaser.GameObjects.GameObject {
 
   preUpdate(time: number, delta: number) {
     if (this.crop != null) {
-      this.life -= (delta / 1000);
+      this.life -= ((delta / 1000) * this.scene.game.registry.get('speed'));
       if (this.life < -this.crop.time_to_death) {
         this.crop = null;
         this.land = LandState.EMPTY;

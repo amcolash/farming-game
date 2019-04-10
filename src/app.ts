@@ -14,7 +14,7 @@ const config: GameConfig = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: true
+      debug: false
     }
   }
 };
@@ -26,6 +26,7 @@ export class FarmingGame extends Phaser.Game {
     // Set up game data
     this.registry.set('money', 300);
     this.registry.set('currentCrop', 0);
+    this.registry.set('speed', 5);
   }
 }
 
