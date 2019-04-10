@@ -11,8 +11,8 @@ export class Farmer extends Phaser.GameObjects.Container {
 
   constructor(scene: Phaser.Scene, x: number, y: number, farm: Farm) {
     super(scene, x, y);
-    this.add(new Phaser.GameObjects.Arc(scene, x, y + 12, 4, 0, 360, false, 0xff0000));
-    this.add(new Phaser.GameObjects.Image(scene, x, y, 'crops', 20));
+    this.add(new Phaser.GameObjects.Arc(scene, 0, 12, 4, 0, 360, false, 0xff0000));
+    this.add(new Phaser.GameObjects.Image(scene, 0, 0, 'crops', 20));
 
     scene.add.existing(this);
     scene.physics.add.existing(this);
