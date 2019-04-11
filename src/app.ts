@@ -24,8 +24,10 @@ export class FarmingGame extends Phaser.Game {
     super(config);
 
     // Set up game data
-    this.registry.set('money', 300);
     this.registry.set('currentCrop', 0);
+    this.registry.set('life', 0);
+    this.registry.set('money', 300);
+    this.registry.set('profit', 0);
 
     // Disable normal right click
     this.input.mouse.disableContextMenu();

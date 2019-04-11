@@ -8,6 +8,7 @@ export enum LandState {
 }
 
 export class Land extends Phaser.GameObjects.GameObject {
+  registry: Phaser.Data.DataManager;
   world: Phaser.Physics.Arcade.World;
 
   sprite: Phaser.GameObjects.Sprite;
@@ -23,7 +24,9 @@ export class Land extends Phaser.GameObjects.GameObject {
     super(scene, 'land');
     scene.sys.updateList.add(this);
     
+    this.registry = scene.game.registry;
     this.world = scene.physics.world;
+
     this.crop = null;
     this.land = LandState.EMPTY;
     this.id = x.toString() + y.toString();
@@ -85,19 +88,19 @@ export class Land extends Phaser.GameObjects.GameObject {
       return;
     }
 
-    const money = this.scene.game.registry.get('money');
-    const crop = Crops[this.scene.game.registry.get('currentCrop')];
+    const money = this.registry.get('money');
+    const crop = Crops[this.registry.get('currentCrop')];
 
     switch(this.land) {
       case LandState.EMPTY:
         if (money - 5 >= 0) {
-          this.scene.game.registry.set('money', money - 5);
+          this.registry.set('money', money - 5);
           this.land = LandState.PLOWED;
         }
         break;
       case LandState.PLOWED:
         if (money - crop.cost >= 0) {
-          this.scene.game.registry.set('money', money - crop.cost);
+          this.registry.set('money', money - crop.cost);
           this.crop = crop;
           this.life = crop.timeToRipe;
           this.land = LandState.PLANTED;
@@ -106,7 +109,8 @@ export class Land extends Phaser.GameObjects.GameObject {
       case LandState.PLANTED:
         break;
       case LandState.READY:
-        this.scene.game.registry.set('money', money + this.crop.revenue);
+        this.registry.set('money', money + crop.revenue);
+        this.registry.set('profit', this.registry.get('profit') + crop.revenue - crop.cost - 5);
         this.crop = null;
         this.land = LandState.EMPTY;
         break;

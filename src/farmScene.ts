@@ -21,7 +21,7 @@ export class FarmScene extends Phaser.Scene {
     // this.physics.add.collider(this.farmer, farmer1);
 
     this.game.events.on('speed', value => {
-      const raw = Math.max((1 / this.physics.world.timeScale) + value, 1);
+      const raw = Phaser.Math.Clamp((1 / this.physics.world.timeScale) + value, 1, 20);
       this.physics.world.timeScale = 1 / raw;
 
       // Let HUD know final value
@@ -29,7 +29,9 @@ export class FarmScene extends Phaser.Scene {
     });
   }
 
-  update(): void {
+  update(time: number, delta: number): void {
+    this.game.registry.set('life', this.game.registry.get('life') + delta * (1 / this.physics.world.timeScale));
+
     this.camera.update();
     this.farmer.update();
   }
