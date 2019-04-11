@@ -24,7 +24,7 @@ module.exports = {
     compress: true,
     port: 9000,
     open: true,
-    host: '192.168.1.116'
+    host: '127.0.0.1'
   },
   mode: 'development'
 };
