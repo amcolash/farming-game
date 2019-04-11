@@ -8,17 +8,19 @@ export class Farmer extends Phaser.GameObjects.Container {
   farm: Farm;
   registry: Phaser.Data.DataManager;
   wait: number;
+  world: Phaser.Physics.Arcade.World;
 
   constructor(scene: Phaser.Scene, x: number, y: number, farm: Farm) {
     super(scene, x, y);
-    this.add(new Phaser.GameObjects.Arc(scene, 0, 12, 4, 0, 360, false, 0xff0000));
-    this.add(new Phaser.GameObjects.Image(scene, 0, 0, 'crops', 20));
-
     scene.add.existing(this);
     scene.physics.add.existing(this);
-
+    
     this.farm = farm;
     this.registry = scene.game.registry;
+    this.world = scene.physics.world;
+
+    this.add(new Phaser.GameObjects.Arc(scene, 0, 12, 4, 0, 360, false, 0xff0000));
+    this.add(new Phaser.GameObjects.Image(scene, 0, 0, 'crops', 20));
   }
 
   preUpdate(time: number, delta: number) {
@@ -26,7 +28,7 @@ export class Farmer extends Phaser.GameObjects.Container {
     body.setVelocity(0);
     
     if (this.wait > 0) {
-      this.wait -= delta * this.registry.get('speed');
+      this.wait -= delta * (1 / this.world.timeScale);
       return;
     }
 
@@ -61,7 +63,7 @@ export class Farmer extends Phaser.GameObjects.Container {
         }
         tile.handleClick();
       } else {
-        this.scene.physics.moveTo(this, tile.sprite.x, tile.sprite.y, 60 * this.registry.get('speed'));
+        this.scene.physics.moveTo(this, tile.sprite.x, tile.sprite.y, 60);
       }
     }
   }
@@ -101,8 +103,7 @@ export class Farmer extends Phaser.GameObjects.Container {
   }
 
   distance(tile: Land) {
-    // Add random to try and prevent "on the edge" cases
-    return Phaser.Math.Distance.Squared(this.x, this.y, tile.sprite.x, tile.sprite.y) + Math.random();
+    return Phaser.Math.Distance.Squared(this.x, this.y, tile.sprite.x, tile.sprite.y);
   }
 
   canAffordPlow(): boolean {
@@ -157,6 +158,7 @@ export class Farmer extends Phaser.GameObjects.Container {
       score = (score + tile.life * 5000);
     }
 
-    return score;
+    // Add random to try and prevent duplicate scores
+    return score + Math.random();
   }
 }

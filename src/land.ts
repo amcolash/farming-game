@@ -8,6 +8,8 @@ export enum LandState {
 }
 
 export class Land extends Phaser.GameObjects.GameObject {
+  world: Phaser.Physics.Arcade.World;
+
   sprite: Phaser.GameObjects.Sprite;
   id: string;
   bar: Phaser.GameObjects.Rectangle;
@@ -16,25 +18,26 @@ export class Land extends Phaser.GameObjects.GameObject {
   life: number;
   crop: Crop;
 
-  // TODO: Make this a group
+  // TODO: Make this a container
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, 'land');
     scene.sys.updateList.add(this);
     
+    this.world = scene.physics.world;
     this.crop = null;
     this.land = LandState.EMPTY;
+    this.id = x.toString() + y.toString();
 
     this.sprite = scene.add.sprite(x, y, 'crops');
     this.sprite.setInteractive({ useHandCursor: true });
     this.sprite.on('pointerdown', this.handleClick.bind(this));
 
-    this.id = x.toString() + y.toString();
     this.bar = scene.add.rectangle(x - 16, y - 16, 0, 2, 0x00ee00);
   }
 
   preUpdate(time: number, delta: number) {
     if (this.crop != null) {
-      this.life -= ((delta / 1000) * this.scene.game.registry.get('speed'));
+      this.life -= (delta / 1000) * (1 / this.world.timeScale);
       if (this.life < -this.crop.timeToDeath) {
         this.crop = null;
         this.land = LandState.EMPTY;

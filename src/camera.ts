@@ -1,11 +1,14 @@
 export class Camera extends Phaser.Physics.Arcade.Image {
   camera: Phaser.Cameras.Scene2D.Camera;
   cursors: Phaser.Input.Keyboard.CursorKeys;
-  readonly speed: number = 200;
+  readonly speed: number = 300;
+  world: Phaser.Physics.Arcade.World;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'crops', 1);
     scene.physics.add.existing(this);
+
+    this.world = scene.physics.world;
 
     this.cursors = scene.input.keyboard.createCursorKeys();
     this.camera = scene.cameras.main;
@@ -28,13 +31,13 @@ export class Camera extends Phaser.Physics.Arcade.Image {
     const right = this.cursors.right.isDown;
     
     if ((up && !down) || (!up && down)) {
-      if (up) this.setVelocityY(-this.speed);
-      if (down) this.setVelocityY(this.speed);
+      if (up) this.setVelocityY(-this.speed * this.world.timeScale);
+      if (down) this.setVelocityY(this.speed * this.world.timeScale);
     }
 
     if ((left && !right) || (!left && right)) {
-      if (left) this.setVelocityX(-this.speed);
-      if (right) this.setVelocityX(this.speed);
+      if (left) this.setVelocityX(-this.speed * this.world.timeScale);
+      if (right) this.setVelocityX(this.speed * this.world.timeScale);
     }
   }
 }
