@@ -20,12 +20,14 @@ export class FarmScene extends Phaser.Scene {
     // const farmer1 = new Farmer(this, 350, 350, this.farm);
     // this.physics.add.collider(this.farmer, farmer1);
 
+    this.physics.world.timeScale = 1 / 25;
+
     this.game.events.on('speed', value => {
-      const raw = Phaser.Math.Clamp((1 / this.physics.world.timeScale) + value, 1, 20);
+      const raw = Phaser.Math.Clamp((1 / this.physics.world.timeScale) + value, 1, 25);
       this.physics.world.timeScale = 1 / raw;
 
       // Let HUD know final value
-      this.game.events.emit('speedValue', raw);
+      this.game.events.emit('speedValue', raw.toFixed(0));
     });
   }
 
