@@ -26,7 +26,7 @@ export class FarmingGame extends Phaser.Game {
     // Set up game data
     this.registry.set('money', 300);
     this.registry.set('currentCrop', 0);
-    this.registry.set('speed', 5);
+    this.registry.set('speed', 1);
 
     this.input.mouse.disableContextMenu();
   }
