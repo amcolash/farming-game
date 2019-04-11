@@ -13,7 +13,7 @@ export let Crops: Crop[] = [
     cost: 10,
     revenue: 18,
     timeToRipe: 10,
-    timeToDeath: 40,
+    timeToDeath: 30,
     frame: 0
   },
   {
@@ -21,7 +21,7 @@ export let Crops: Crop[] = [
     cost: 15,
     revenue: 24,
     timeToRipe: 20,
-    timeToDeath: 50,
+    timeToDeath: 35,
     frame: 1
   },
   {

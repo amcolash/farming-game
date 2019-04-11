@@ -89,16 +89,16 @@ export class Land extends Phaser.GameObjects.GameObject {
     }
 
     const money = this.registry.get('money');
-    const crop = Crops[this.registry.get('currentCrop')];
-
+    
     switch(this.land) {
       case LandState.EMPTY:
-        if (money - 5 >= 0) {
-          this.registry.set('money', money - 5);
-          this.land = LandState.PLOWED;
-        }
-        break;
+      if (money - 5 >= 0) {
+        this.registry.set('money', money - 5);
+        this.land = LandState.PLOWED;
+      }
+      break;
       case LandState.PLOWED:
+        const crop = Crops[this.registry.get('currentCrop')];
         if (money - crop.cost >= 0) {
           this.registry.set('money', money - crop.cost);
           this.crop = crop;
@@ -109,8 +109,8 @@ export class Land extends Phaser.GameObjects.GameObject {
       case LandState.PLANTED:
         break;
       case LandState.READY:
-        this.registry.set('money', money + crop.revenue);
-        this.registry.set('profit', this.registry.get('profit') + crop.revenue - crop.cost - 5);
+        this.registry.set('money', money + this.crop.revenue);
+        this.registry.set('profit', this.registry.get('profit') + this.crop.revenue - this.crop.cost - 5);
         this.crop = null;
         this.land = LandState.EMPTY;
         break;
