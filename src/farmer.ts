@@ -72,7 +72,7 @@ export class Farmer extends Phaser.GameObjects.Container {
     const money = this.registry.get('money');
     let best = 0;
     for (var i = 0; i < Crops.length; i++) {
-      if (Crops[i].revenue > best && money - 2 * (Crops[i].cost + 5) >= 200) best = i;
+      if (Crops[i].revenue > Crops[best].revenue && money - 3 * (Crops[i].cost + 5) >= this.baseMoney) best = i;
     }
 
     return best;

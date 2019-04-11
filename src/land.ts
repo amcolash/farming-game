@@ -111,6 +111,7 @@ export class Land extends Phaser.GameObjects.GameObject {
       case LandState.READY:
         this.registry.set('money', money + this.crop.revenue);
         this.registry.set('profit', this.registry.get('profit') + this.crop.revenue - this.crop.cost - 5);
+        this.registry.values.stats[this.crop.frame]++;
         this.crop = null;
         this.land = LandState.EMPTY;
         break;

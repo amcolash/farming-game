@@ -1,4 +1,6 @@
 import "phaser";
+
+import { Crops } from './crops';
 import { FarmScene } from './farmScene';
 import { HUDScene } from './hudScene';
 import { LoadingScene } from './loadingScene';
@@ -28,6 +30,7 @@ export class FarmingGame extends Phaser.Game {
     this.registry.set('life', 0);
     this.registry.set('money', 300);
     this.registry.set('profit', 0);
+    this.registry.set('stats', new Array(Crops.length).fill(0));
 
     // Disable normal right click
     this.input.mouse.disableContextMenu();

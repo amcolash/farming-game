@@ -12,6 +12,8 @@ export class HUDScene extends Phaser.Scene {
   planted: Phaser.GameObjects.Text;
   profit: Phaser.GameObjects.Text;
   speed: Phaser.GameObjects.Text;
+
+  bars: Phaser.GameObjects.Rectangle[];
   
   constructor() {
     super('HUDScene');
@@ -40,8 +42,18 @@ export class HUDScene extends Phaser.Scene {
     this.planted = this.add.text(width - 120, height - 95, 'Planted: \nSpeed: ' + this.registry.get('speed'));
     this.game.events.addListener('planted', value => this.planted.setText('Planted: ' + value));
 
-    this.speed = this.add.text(width - 120, height - 80, 'Speed: 1');
+    this.speed = this.add.text(width - 120, height - 80, 'Speed: ' + (1 / this.scene.get('FarmScene').physics.world.timeScale).toFixed(0));
     this.game.events.addListener('speedValue', value => this.speed.setText('Speed: ' + value));
+
+    this.bars = [];
+    const sorted = Crops.sort((a, b) => { return a.frame - b.frame });
+    for (var i = 0; i < sorted.length; i++) {
+      const crop = sorted[i];
+      this.add.sprite(20 + i * 32, height - 120, 'crops', crop.frame);
+      const bar = this.add.rectangle(20 + i * 32, height - 170, 8, 50, 0x333333);
+      bar.setAngle(180);
+      this.bars.push(bar);
+    }
   }
 
   update(time: number, delta: number): void {
@@ -49,6 +61,14 @@ export class HUDScene extends Phaser.Scene {
     this.life.setText('Life: ' + this.getTime(this.registry.get('life')));
     this.money.setText('$' + this.registry.get('money'));
     this.profit.setText('Profit: $' + this.registry.get('profit'));
+
+    const stats = this.registry.get('stats');
+    const total = stats.reduce((a, v) => { return a + v; });
+    // console.log(stats);
+    for (var i = 0; i < Crops.length; i++) {
+      if (total === 0) this.bars[i].height = 3;
+      else this.bars[i].height = 3 + 47 * (stats[i] / total);
+    }
   }
 
   getTime(ms: number): string {
