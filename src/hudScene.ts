@@ -53,6 +53,7 @@ export class HUDScene extends Phaser.Scene {
     this.game.events.addListener('speedValue', value => this.speed.setText('Speed: ' + value));
 
     this.stats = this.add.container(20, height - 125);
+    this.stats.add(new Phaser.GameObjects.Rectangle(this, -20, 23, 200, 115, 0x000000, 0.35).setOrigin(0, 1));
     
     this.bars = [];
     const sorted = Crops.sort((a, b) => { return a.frame - b.frame });

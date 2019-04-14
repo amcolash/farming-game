@@ -15,10 +15,10 @@ export class Shop extends Phaser.GameObjects.GameObject {
       const data = crop.name + '(' + crop.timeToRipe + ' days)' + '\ncost: $' + crop.cost.toString() + '\nrevenue: $' + crop.revenue.toString();
       const text = this.scene.add.text(180, i * 100 + 20, data, { fontSize: 24 });
 
-      sprite.setInteractive({ useHandCursor: true })
-        .on('pointerup', () => this.selectCrop(index));
-      text.setInteractive({ useHandCursor: true })
-        .on('pointerup', () => this.selectCrop(index));
+      // sprite.setInteractive({ useHandCursor: true })
+      //   .on('pointerup', () => this.selectCrop(index));
+      // text.setInteractive({ useHandCursor: true })
+      //   .on('pointerup', () => this.selectCrop(index));
     }
   }
 

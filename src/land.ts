@@ -32,8 +32,8 @@ export class Land extends Phaser.GameObjects.GameObject {
     this.id = x.toString() + y.toString();
 
     this.sprite = scene.add.sprite(x, y, 'crops');
-    this.sprite.setInteractive({ useHandCursor: true });
-    this.sprite.on('pointerdown', this.handleClick.bind(this));
+    // this.sprite.setInteractive({ useHandCursor: true });
+    // this.sprite.on('pointerdown', this.handleClick.bind(this));
 
     this.bar = scene.add.rectangle(x - 16, y - 16, 0, 2, 0x00ee00);
   }
