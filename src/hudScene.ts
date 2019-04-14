@@ -13,6 +13,7 @@ export class HUDScene extends Phaser.Scene {
   profit: Phaser.GameObjects.Text;
   speed: Phaser.GameObjects.Text;
 
+  stats: Phaser.GameObjects.Container;
   bars: Phaser.GameObjects.Rectangle[];
   
   constructor() {
@@ -26,33 +27,45 @@ export class HUDScene extends Phaser.Scene {
     this.registry = this.game.registry;
     this.isShop = false;
 
-    this.add.rectangle(0, height - 50, width * 3, 100, 0x000000).setInteractive({ cursor: 'default' });
-    this.button = new TextButton(this, 60, height - 50, this.isShop ? 'Back' : 'Shop', () => this.toggleShop());
-    this.money = this.add.text(width - 120, height - 50, '$0', { fontSize: 24 });
-    this.life = this.add.text(20, height - 65, 'Life: 0');
-    this.profit = this.add.text(20, height - 80, 'Profit: $0');
-    this.crop = this.add.sprite(width / 2 - 8, height - 40, 'crops', Crops[this.registry.get('currentCrop')].frame);
-    this.crop.setScale(1.75);
+    this.add.rectangle(0, height - 100, width, 100, 0x000000).setInteractive({ cursor: 'default' }).setOrigin(0, 0);
+    this.add.rectangle(0, height - 102, width, 2, 0x777777).setOrigin(0, 0);
 
+    this.button = new TextButton(this, 20, height - 40, this.isShop ? 'Back' : 'Shop', () => this.toggleShop());
+    this.life = this.add.text(20, height - 90, 'Life: 0');
+    this.profit = this.add.text(20, height - 70, 'Profit: $0');
+    this.crop = this.add.sprite(width / 2 - 8, height - 35, 'crops', Crops[this.registry.get('currentCrop')].frame);
+    this.crop.setScale(1.5);
+    
     new TextButton(this, width / 2 - 32, height - 100, "<", () => this.game.events.emit('speed', -1));
     new TextButton(this, width / 2 - 4, height - 100, ">", () => this.game.events.emit('speed', 1));
     new TextButton(this, width / 2 - 32, height - 80, "-", () => this.game.events.emit('zoom', -1));
     new TextButton(this, width / 2 - 4, height - 80, "+", () => this.game.events.emit('zoom', 1));
+    
+    this.money = this.add.text(width - 20, height - 40, '$0', { fontSize: 24 });
+    this.money.setOrigin(1, 0);
 
-    this.planted = this.add.text(width - 120, height - 95, 'Planted: \nSpeed: ' + this.registry.get('speed'));
+    this.planted = this.add.text(width - 20, height - 90, 'Planted: \nSpeed: ' + this.registry.get('speed'));
+    this.planted.setOrigin(1, 0);
     this.game.events.addListener('planted', value => this.planted.setText('Planted: ' + value));
 
-    this.speed = this.add.text(width - 120, height - 80, 'Speed: ' + (1 / this.scene.get('FarmScene').physics.world.timeScale).toFixed(0));
+    this.speed = this.add.text(width - 20, height - 70, 'Speed: ' + (1 / this.scene.get('FarmScene').physics.world.timeScale).toFixed(0));
+    this.speed.setOrigin(1, 0);
     this.game.events.addListener('speedValue', value => this.speed.setText('Speed: ' + value));
 
+    this.stats = this.add.container(20, height - 125);
+    
     this.bars = [];
     const sorted = Crops.sort((a, b) => { return a.frame - b.frame });
     for (var i = 0; i < sorted.length; i++) {
       const crop = sorted[i];
-      this.add.sprite(20 + i * 32, height - 120, 'crops', crop.frame);
-      const bar = this.add.rectangle(20 + i * 32, height - 170, 8, 50, 0x333333);
+      
+      const sprite = new Phaser.GameObjects.Sprite(this, i * 32, 0, 'crops', crop.frame);
+      this.stats.add(sprite);
+
+      const bar = new Phaser.GameObjects.Rectangle(this, i * 32, -50, 8, 50, 0xcccccc);
       bar.setAngle(180);
       this.bars.push(bar);
+      this.stats.add(bar);
     }
   }
 
@@ -66,9 +79,11 @@ export class HUDScene extends Phaser.Scene {
     const total = stats.reduce((a, v) => { return a + v; });
     // console.log(stats);
     for (var i = 0; i < Crops.length; i++) {
-      if (total === 0) this.bars[i].height = 3;
-      else this.bars[i].height = 3 + 47 * (stats[i] / total);
+      if (total === 0) this.bars[i].height = 2;
+      else this.bars[i].height = 2 + 47 * (stats[i] / total);
     }
+
+    this.stats.visible = !this.isShop;
   }
 
   getTime(ms: number): string {
