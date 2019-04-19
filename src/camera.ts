@@ -30,14 +30,10 @@ export class Camera extends Phaser.Physics.Arcade.Image {
     const left = this.cursors.left.isDown;
     const right = this.cursors.right.isDown;
     
-    if ((up && !down) || (!up && down)) {
-      if (up) this.setVelocityY(-this.speed * this.world.timeScale);
-      if (down) this.setVelocityY(this.speed * this.world.timeScale);
-    }
+    if (up && !down) this.setVelocityY(-this.speed * this.world.timeScale);
+    if (!up && down) this.setVelocityY(this.speed * this.world.timeScale);
 
-    if ((left && !right) || (!left && right)) {
-      if (left) this.setVelocityX(-this.speed * this.world.timeScale);
-      if (right) this.setVelocityX(this.speed * this.world.timeScale);
-    }
+    if (left && !right) this.setVelocityX(-this.speed * this.world.timeScale);
+    if (!left && right) this.setVelocityX(this.speed * this.world.timeScale);
   }
 }

@@ -26,6 +26,7 @@ export class FarmScene extends Phaser.Scene {
     // const farmer1 = new Farmer(this, 350, 350, this.farm);
     // this.physics.add.collider(this.farmer, farmer1);
 
+    this.input.setPollAlways();
     this.physics.world.timeScale = 1 / 5;
 
     this.game.events.on('speed', value => {

@@ -14,6 +14,7 @@ export class Land extends Phaser.GameObjects.GameObject {
   sprite: Phaser.GameObjects.Sprite;
   id: string;
   bar: Phaser.GameObjects.Rectangle;
+  hover: Phaser.GameObjects.Rectangle;
 
   land: LandState;
   life: number;
@@ -33,8 +34,13 @@ export class Land extends Phaser.GameObjects.GameObject {
     this.sprite = scene.add.sprite(x, y, 'crops');
     this.sprite.setInteractive({ useHandCursor: true });
     this.sprite.on('pointerdown', this.handleClick.bind(this));
+    this.sprite.on('pointerover', () => this.hover.setVisible(true));
+    this.sprite.on('pointerout', () => this.hover.setVisible(false));
 
     this.bar = scene.add.rectangle(x - 16, y - 16, 0, 2, 0x00ee00);
+    this.hover = scene.add.rectangle(x, y, 32, 32, 0x00ddbb).setAlpha(0.25).setVisible(false);
+
+    if (x === 0 && y === 0) scene.add.rectangle(x, y, 32, 32, 0xffffff).setAlpha(0.15);
   }
 
   update(time: number, delta: number) {
