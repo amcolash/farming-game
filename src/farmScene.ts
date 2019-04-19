@@ -18,9 +18,9 @@ export class FarmScene extends Phaser.Scene {
     this.farm = new Farm(this);
     this.camera = new Camera(this, 0, 0);
     
-    this.farmer1 = new Farmer(this, 0, 0, this.farm, FarmerType.ALL);
-    // this.farmer2 = new Farmer(this, 32, 0, this.farm, FarmerType.PLANT);
-    // this.farmer3 = new Farmer(this, 64, 0, this.farm, FarmerType.HARVEST);
+    // this.farmer1 = new Farmer(this, 0, 0, this.farm, FarmerType.ALL);
+    this.farmer2 = new Farmer(this, 32, 0, this.farm, FarmerType.PLANT);
+    this.farmer3 = new Farmer(this, 64, 0, this.farm, FarmerType.HARVEST);
 
     // TODO: Figure out dancing and fighting farmers
     // const farmer1 = new Farmer(this, 350, 350, this.farm);

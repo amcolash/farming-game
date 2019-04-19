@@ -13,6 +13,7 @@ export class Farmer extends Phaser.GameObjects.Container {
 
   farmerType: FarmerType;
   farm: Farm;
+  spawnLocation: Phaser.Math.Vector2;
   registry: Phaser.Data.DataManager;
   wait: number;
   world: Phaser.Physics.Arcade.World;
@@ -24,6 +25,7 @@ export class Farmer extends Phaser.GameObjects.Container {
     
     this.farmerType = type;
     this.farm = farm;
+    this.spawnLocation = new Phaser.Math.Vector2(x, y);
     this.registry = scene.game.registry;
     this.world = scene.physics.world;
 
@@ -65,7 +67,8 @@ export class Farmer extends Phaser.GameObjects.Container {
             this.wait = 100;
             break;
         }
-        
+
+        this.wait *= (this.farmerType == FarmerType.ALL ? 1 : 0.75);
         if (this.canInteract(tile.land)) tile.handleClick();
       } else {
         this.scene.physics.moveTo(this, tile.sprite.x, tile.sprite.y, 60);
@@ -157,6 +160,10 @@ export class Farmer extends Phaser.GameObjects.Container {
     return Phaser.Math.Distance.Squared(this.x, this.y, tile.sprite.x, tile.sprite.y);
   }
 
+  spawnDistance(tile: Land) {
+    return Phaser.Math.Distance.Squared(this.spawnLocation.x, this.spawnLocation.y, tile.sprite.x, tile.sprite.y);
+  }
+
   canAffordPlow(): boolean {
     const money = this.registry.get('money');
     return money > 5 + this.baseMoney;
@@ -184,8 +191,6 @@ export class Farmer extends Phaser.GameObjects.Container {
         break;
     }
 
-    this.scene.game.events.emit('planted', this.farm.planted.getLength() + this.farm.ready.getLength());
-
     var score = 9999999999;
     var best = null;
 
@@ -209,7 +214,9 @@ export class Farmer extends Phaser.GameObjects.Container {
     if (tile.land == LandState.READY) {
       score = ((score / 400) * score + tile.life * 500 - tile.crop.revenue * 500);
     } else if (tile.land == LandState.PLANTED) {
-      score = (score + tile.life * 5000);
+      score += tile.life * 5000;
+    } else {
+      score += this.spawnDistance(tile);
     }
 
     // Add random to try and prevent duplicate scores

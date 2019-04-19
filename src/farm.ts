@@ -73,5 +73,7 @@ export class Farm extends Phaser.GameObjects.GameObject {
         }
       }
     }
+
+    this.scene.game.events.emit('planted', this.planted.getLength() + this.ready.getLength());
   }
 }
