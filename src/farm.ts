@@ -7,10 +7,10 @@ export class Farm extends Phaser.GameObjects.GameObject {
 
   farm: Land[][];
 
-  empty: Phaser.GameObjects.Group;
-  plowed: Phaser.GameObjects.Group;
-  planted: Phaser.GameObjects.Group;
-  ready: Phaser.GameObjects.Group;
+  empty: Phaser.Structs.Set<Land>;
+  plowed: Phaser.Structs.Set<Land>;
+  planted: Phaser.Structs.Set<Land>;
+  ready: Phaser.Structs.Set<Land>;
 
   constructor(scene: Phaser.Scene) {
     super(scene, 'farm');
@@ -22,10 +22,10 @@ export class Farm extends Phaser.GameObjects.GameObject {
 
     this.scene.physics.world.setBounds(xPos, yPos, width, height);
 
-    this.empty = scene.add.group();
-    this.plowed = scene.add.group();
-    this.planted = scene.add.group();
-    this.ready = scene.add.group();
+    this.empty = new Phaser.Structs.Set<Land>();
+    this.plowed = new Phaser.Structs.Set<Land>();
+    this.planted = new Phaser.Structs.Set<Land>();
+    this.ready = new Phaser.Structs.Set<Land>();
 
     this.farm = [];
 
@@ -37,43 +37,47 @@ export class Farm extends Phaser.GameObjects.GameObject {
 
         const tile = new Land(scene, offsetX, offsetY);
         // if (x === 0 && y === 0) tile.land = LandState.PLOWED;
-        this.empty.add(tile);
+        this.empty.set(tile);
         this.farm[x + this.dimensionX][y + this.dimensionY] = tile;
       }
     }
 
-    const grid = new Phaser.GameObjects.Grid(scene, -this.tileSize / 2, -this.tileSize / 2, width, height, this.tileSize, this.tileSize, 0x000000, 0, 0xffffff, 0.1);
-    scene.add.existing(grid);
+    // const grid = new Phaser.GameObjects.Grid(scene, -this.tileSize / 2, -this.tileSize / 2, width, height, this.tileSize, this.tileSize, 0x000000, 0, 0xffffff, 0.1);
+    // scene.add.existing(grid);
+
+    // scene.events.addListener('tileUpdate', (tile: Land) => this.tileUpdated.bind(this, tile));
+    scene.events.addListener('tileUpdate', (tile: Land) => this.tileUpdated(tile));
+  }
+
+  tileUpdated(tile: Land) {
+    console.log(tile);
+
+    this.empty.delete(tile);
+    this.plowed.delete(tile);
+    this.planted.delete(tile);
+    this.ready.delete(tile);
+
+    switch(tile.land) {
+      case LandState.EMPTY:
+        this.empty.set(tile);
+        break;
+      case LandState.PLOWED:
+        this.plowed.set(tile);
+        break;
+      case LandState.PLANTED:
+        this.planted.set(tile);
+        break;
+      case LandState.READY:
+        this.ready.set(tile);
+        break;
+    }
+
+    this.scene.game.events.emit('planted', this.planted.size + this.ready.size);
   }
 
   update(time: number, delta: number): void {
-    for (var x = 0; x < this.farm.length; x++) {
-      for (var y = 0; y < this.farm[x].length; y++) {
-        const tile = this.farm[x][y];
-        tile.update(time, delta);
-
-        this.empty.remove(tile);
-        this.plowed.remove(tile);
-        this.planted.remove(tile);
-        this.ready.remove(tile);
-        
-        switch(tile.land) {
-          case LandState.EMPTY:
-            this.empty.add(tile);
-            break;
-          case LandState.PLOWED:
-            this.plowed.add(tile);
-            break;
-          case LandState.PLANTED:
-            this.planted.add(tile);
-            break;
-          case LandState.READY:
-            this.ready.add(tile);
-            break;
-        }
-      }
-    }
-
-    this.scene.game.events.emit('planted', this.planted.getLength() + this.ready.getLength());
+    this.plowed.entries.forEach(t => t.update(time, delta));
+    this.planted.entries.forEach(t => t.update(time, delta));
+    this.ready.entries.forEach(t => t.update(time, delta));
   }
 }

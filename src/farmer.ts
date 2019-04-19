@@ -137,7 +137,7 @@ export class Farmer extends Phaser.GameObjects.Container {
   }
 
   getBestHarvesterTile(): Land {
-    if (this.farm.ready.getLength() > 0) {
+    if (this.farm.ready.size > 0) {
       return this.getBestTile(LandState.READY);
     } else {
       return this.getBestTile(LandState.PLANTED);
@@ -145,7 +145,7 @@ export class Farmer extends Phaser.GameObjects.Container {
   }
 
   getBestPlanterTile(): Land {
-    if (this.farm.plowed.getLength() > 0 && this.canAffordCrop()) {
+    if (this.farm.plowed.size > 0 && this.canAffordCrop()) {
       return this.getBestTile(LandState.PLOWED);
     } else {
       return this.getBestTile(LandState.EMPTY);
@@ -153,9 +153,9 @@ export class Farmer extends Phaser.GameObjects.Container {
   }
 
   getBestAllTile(): Land {
-    if (this.farm.ready.getLength() > 0) {
+    if (this.farm.ready.size > 0) {
       return this.getBestTile(LandState.READY);
-    } else if (this.farm.plowed.getLength() > 0 && this.canAffordCrop()) {
+    } else if (this.farm.plowed.size > 0 && this.canAffordCrop()) {
       return this.getBestTile(LandState.PLOWED);
     } else if (this.canAffordPlow()) {
       return this.getBestTile(LandState.EMPTY);
@@ -238,16 +238,16 @@ export class Farmer extends Phaser.GameObjects.Container {
     var arr;
     switch(land) {
       case LandState.PLOWED:
-        arr = this.farm.plowed.getChildren();
+        arr = this.farm.plowed.entries;
         break;
       case LandState.PLANTED:
-        arr = this.farm.planted.getChildren();
+        arr = this.farm.planted.entries;
         break;
       case LandState.READY:
-        arr = this.farm.ready.getChildren();
+        arr = this.farm.ready.entries;
         break;
       case LandState.EMPTY:
-        arr = this.farm.empty.getChildren();
+        arr = this.farm.empty.entries;
         break;
     }
 
@@ -255,14 +255,13 @@ export class Farmer extends Phaser.GameObjects.Container {
     var best = null;
 
     if (arr) {
-      for (var i = 0; i < arr.length; i++) {
-        const tile = arr[i] as Land;
+      arr.forEach((tile: Land) => {
         const tmpScore = this.getScore(tile);
         if (tmpScore < score) {
           score = tmpScore;
           best = tile;
         }
-      }
+      });
     }
 
     return best;

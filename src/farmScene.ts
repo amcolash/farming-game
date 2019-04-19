@@ -26,6 +26,7 @@ export class FarmScene extends Phaser.Scene {
     // const farmer1 = new Farmer(this, 350, 350, this.farm);
     // this.physics.add.collider(this.farmer, farmer1);
 
+    // There is an issue with this, see: https://github.com/photonstorm/phaser/issues/4405
     this.input.setPollAlways();
     this.physics.world.timeScale = 1 / 5;
 
@@ -48,5 +49,20 @@ export class FarmScene extends Phaser.Scene {
     if (this.farmer1) this.farmer1.update(time, delta);
     if (this.farmer2) this.farmer2.update(time, delta);
     if (this.farmer3) this.farmer3.update(time, delta);
+
+    this.frustumCull();
+  }
+
+  // Frustum culling from: https://github.com/photonstorm/phaser/issues/4092
+  frustumCull(): void {
+    let children = this.children.getChildren();
+
+    for (let child of children)
+      (child as any).visible = false;
+
+    let visible = this.cameras.main.cull(children);
+    
+    for (let child of visible)
+      (child as any).visible = (child as any).alpha > 0;
   }
 }

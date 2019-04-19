@@ -31,14 +31,14 @@ export class Land extends Phaser.GameObjects.GameObject {
     this.land = LandState.EMPTY;
     this.id = x.toString() + y.toString();
 
-    this.sprite = scene.add.sprite(x, y, 'crops');
+    this.sprite = scene.add.sprite(x, y, 'crops', 19);
     this.sprite.setInteractive({ useHandCursor: true });
     this.sprite.on('pointerdown', this.handleClick.bind(this));
-    this.sprite.on('pointerover', () => this.hover.setVisible(true));
-    this.sprite.on('pointerout', () => this.hover.setVisible(false));
+    this.sprite.on('pointerover', () => this.hover.setAlpha(0.25));
+    this.sprite.on('pointerout', () => this.hover.setAlpha(0));
 
     this.bar = scene.add.rectangle(x - 16, y - 16, 0, 2, 0x00ee00);
-    this.hover = scene.add.rectangle(x, y, 32, 32, 0x00ddbb).setAlpha(0.25).setVisible(false);
+    this.hover = scene.add.rectangle(x, y, 32, 32, 0x00ddbb).setAlpha(0);
 
     if (x === 0 && y === 0) scene.add.rectangle(x, y, 32, 32, 0xffffff).setAlpha(0.15);
   }
@@ -49,24 +49,30 @@ export class Land extends Phaser.GameObjects.GameObject {
       if (this.life < -this.crop.timeToDeath) {
         this.crop = null;
         this.land = LandState.EMPTY;
+        this.bar.alpha = 0;
+        this.updateTile();
       } else {
         if (this.life > 0) {
           this.bar.fillColor = 0x00ee00;
           this.bar.width = (1 - (this.life / this.crop.timeToRipe)) * 32;
         } else {
-          this.land = LandState.READY;
+          if (this.land == LandState.PLANTED) {
+            this.land = LandState.READY;
+            this.updateTile();
+          }
+          
           this.bar.fillColor = 0xee0000;
           this.bar.width = (1 - (-this.life / this.crop.timeToDeath)) * 32;
         }
       }
     } else {
-      this.bar.width = 0;
+      this.bar.alpha = 0;
     }
-
-    this.updateImage();
   }
 
-  updateImage() {
+  updateTile() {
+    this.scene.events.emit('tileUpdate', this);
+
     let frame;
     switch(this.land) {
       case LandState.PLOWED:
@@ -114,6 +120,7 @@ export class Land extends Phaser.GameObjects.GameObject {
     if (money - 5 >= 0) {
       this.registry.set('money', money - 5);
       this.land = LandState.PLOWED;
+      this.updateTile();
     }
   }
 
@@ -124,6 +131,8 @@ export class Land extends Phaser.GameObjects.GameObject {
       this.crop = crop;
       this.life = crop.timeToRipe;
       this.land = LandState.PLANTED;
+      this.bar.alpha = 1;
+      this.updateTile();
     }
   }
 
@@ -134,5 +143,7 @@ export class Land extends Phaser.GameObjects.GameObject {
     this.registry.values.stats[this.crop.frame]++;
     this.crop = null;
     this.land = LandState.EMPTY;
+    this.bar.alpha = 0;
+    this.updateTile();
   }
 }

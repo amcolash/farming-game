@@ -44,7 +44,7 @@ export class HUDScene extends Phaser.Scene {
     this.money = this.add.text(width - 20, height - 40, '$0', { fontSize: 24 });
     this.money.setOrigin(1, 0);
 
-    this.planted = this.add.text(width - 20, height - 90, 'Planted: \nSpeed: ' + this.registry.get('speed'));
+    this.planted = this.add.text(width - 20, height - 90, 'Planted: 0');
     this.planted.setOrigin(1, 0);
     this.game.events.addListener('planted', value => this.planted.setText('Planted: ' + value));
 
@@ -76,15 +76,16 @@ export class HUDScene extends Phaser.Scene {
     this.money.setText('$' + this.registry.get('money'));
     this.profit.setText('Profit: $' + this.registry.get('profit'));
 
-    const stats = this.registry.get('stats');
-    const total = stats.reduce((a, v) => { return a + v; });
-    // console.log(stats);
-    for (var i = 0; i < Crops.length; i++) {
-      if (total === 0) this.bars[i].height = 2;
-      else this.bars[i].height = 2 + 47 * (stats[i] / total);
-    }
-
     this.stats.visible = !this.isShop;
+    
+    if (this.stats.visible) {
+      const stats = this.registry.get('stats');
+      const total = stats.reduce((a, v) => { return a + v; });
+      for (var i = 0; i < Crops.length; i++) {
+        if (total === 0) this.bars[i].height = 2;
+        else this.bars[i].height = 2 + 47 * (stats[i] / total);
+      }
+    }
   }
 
   getTime(ms: number): string {
