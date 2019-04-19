@@ -50,8 +50,6 @@ export class Farm extends Phaser.GameObjects.GameObject {
   }
 
   tileUpdated(tile: Land) {
-    console.log(tile);
-
     this.empty.delete(tile);
     this.plowed.delete(tile);
     this.planted.delete(tile);

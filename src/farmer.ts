@@ -29,28 +29,29 @@ export class FarmerStats {
     }
 
     var rnd = [];
-    var finalVal = 1;
+    var extra = 0.5;
+    var finalVal = extra;
     for (var i = 0; i < rndNums; i++) {
-      rnd.push(Math.random() * (1 / (rndNums + 1)));
+      rnd.push(Math.random() * (extra / rndNums));
       finalVal -= rnd[i];
     }
 
     switch (farmer.farmerType) {
       case FarmerType.HARVEST:
-        this.harvestSpeed = rnd[0];
+        this.harvestSpeed = 1 + rnd[0];
         break;
       case FarmerType.PLANT:
-        this.plantSpeed = rnd[0];
-        this.plowSpeed = rnd[1];
+        this.plantSpeed = 1 + rnd[0];
+        this.plowSpeed = 1 + rnd[1];
         break;
       default:
-        this.harvestSpeed = rnd[0];
-        this.plantSpeed = rnd[1];
-        this.plowSpeed = rnd[2];
+        this.harvestSpeed = 1 + rnd[0];
+        this.plantSpeed = 1 + rnd[1];
+        this.plowSpeed = 1 + rnd[2];
         break;
     }
 
-    this.movementSpeed = finalVal;
+    this.movementSpeed = 1 + finalVal;
   }
 }
 
