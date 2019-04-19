@@ -22,7 +22,6 @@ export class Land extends Phaser.GameObjects.GameObject {
   // TODO: Make this a container
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, 'land');
-    scene.sys.updateList.add(this);
     
     this.registry = scene.game.registry;
     this.world = scene.physics.world;
@@ -38,7 +37,7 @@ export class Land extends Phaser.GameObjects.GameObject {
     this.bar = scene.add.rectangle(x - 16, y - 16, 0, 2, 0x00ee00);
   }
 
-  preUpdate(time: number, delta: number) {
+  update(time: number, delta: number) {
     if (this.crop != null) {
       this.life -= (delta / 1000) * (1 / this.world.timeScale);
       if (this.life < -this.crop.timeToDeath) {

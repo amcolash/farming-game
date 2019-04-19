@@ -2,28 +2,36 @@ import { Crops } from './crops';
 import { Farm } from './farm';
 import { Land, LandState } from './land';
 
+export enum FarmerType {
+  ALL,
+  PLANT,
+  HARVEST
+}
+
 export class Farmer extends Phaser.GameObjects.Container {
   readonly baseMoney: number = 200;
 
+  farmerType: FarmerType;
   farm: Farm;
   registry: Phaser.Data.DataManager;
   wait: number;
   world: Phaser.Physics.Arcade.World;
 
-  constructor(scene: Phaser.Scene, x: number, y: number, farm: Farm) {
+  constructor(scene: Phaser.Scene, x: number, y: number, farm: Farm, type: FarmerType) {
     super(scene, x, y);
     scene.add.existing(this);
     scene.physics.add.existing(this);
     
+    this.farmerType = type;
     this.farm = farm;
     this.registry = scene.game.registry;
     this.world = scene.physics.world;
 
-    this.add(new Phaser.GameObjects.Arc(scene, 0, 12, 4, 0, 360, false, 0xff0000));
+    this.add(new Phaser.GameObjects.Arc(scene, 0, 12, 4, 0, 360, false, type == FarmerType.ALL ? 0xff0000 : (type == FarmerType.HARVEST ? 0x00ff00 : 0x0000ff)));
     this.add(new Phaser.GameObjects.Image(scene, 0, 0, 'crops', 20));
   }
 
-  preUpdate(time: number, delta: number) {
+  update(time: number, delta: number) {
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setVelocity(0);
     
@@ -32,17 +40,16 @@ export class Farmer extends Phaser.GameObjects.Container {
       return;
     }
 
-    this.registry.set('currentCrop', this.getBestCrop());
+    if (this.isPlanter()) this.registry.set('currentCrop', this.getBestCrop());
 
     var tile = null;
-    if (this.farm.ready.getLength() > 0) {
-      tile = this.getBestTile(LandState.READY);
-    } else if (this.farm.plowed.getLength() > 0 && this.canAffordCrop()) {
-      tile = this.getBestTile(LandState.PLOWED);
-    } else if (this.canAffordPlow()) {
-      tile = this.getBestTile(LandState.EMPTY);
-    } else {
-      tile = this.getBestTile(LandState.PLANTED);
+
+    if (this.farmerType == FarmerType.ALL) {
+      tile = this.getBestAllTile();
+    } else if (this.isHarvester()) {
+      tile = this.getBestHarvesterTile();
+    } else if (this.isPlanter()) {
+      tile = this.getBestPlanterTile();
     }
 
     if (tile !== null) {
@@ -54,18 +61,60 @@ export class Farmer extends Phaser.GameObjects.Container {
           case LandState.PLOWED:
             this.wait = 50;
             break;
-          case LandState.PLANTED:
-            this.wait = 200;
-            break;
           case LandState.READY:
             this.wait = 100;
             break;
         }
-        tile.handleClick();
+        
+        if (this.canInteract(tile.land)) tile.handleClick();
       } else {
         this.scene.physics.moveTo(this, tile.sprite.x, tile.sprite.y, 60);
       }
     }
+  }
+
+  getBestHarvesterTile(): Land {
+    if (this.farm.ready.getLength() > 0) {
+      return this.getBestTile(LandState.READY);
+    } else {
+      return this.getBestTile(LandState.PLANTED);
+    }
+  }
+
+  getBestPlanterTile(): Land {
+    if (this.farm.plowed.getLength() > 0 && this.canAffordCrop()) {
+      return this.getBestTile(LandState.PLOWED);
+    } else {
+      return this.getBestTile(LandState.EMPTY);
+    }
+  }
+
+  getBestAllTile(): Land {
+    if (this.farm.ready.getLength() > 0) {
+      return this.getBestTile(LandState.READY);
+    } else if (this.farm.plowed.getLength() > 0 && this.canAffordCrop()) {
+      return this.getBestTile(LandState.PLOWED);
+    } else if (this.canAffordPlow()) {
+      return this.getBestTile(LandState.EMPTY);
+    } else {
+      return this.getBestTile(LandState.PLANTED);
+    }
+  }
+
+  isPlanter(): boolean {
+    return this.farmerType == FarmerType.ALL || this.farmerType == FarmerType.PLANT;
+  }
+
+  isHarvester(): boolean {
+    return this.farmerType == FarmerType.ALL || this.farmerType == FarmerType.HARVEST;
+  }
+
+  canInteract(type: LandState): boolean {
+    return (
+      (type == LandState.EMPTY && this.isPlanter() && this.canAffordPlow()) ||
+      (type == LandState.PLOWED && this.isPlanter() && this.canAffordCrop()) ||
+      (type == LandState.READY && this.isHarvester())
+    );
   }
 
   getBestCrop(): number {
@@ -88,13 +137,15 @@ export class Farmer extends Phaser.GameObjects.Container {
         }
         break;
       case LandState.READY:
-        var plowed = this.getClosestTile(LandState.PLOWED);
-        if (plowed && this.distance(plowed) < 500 && this.canAffordCrop()) {
-          best = plowed;
-        } else {
-          var empty = this.getClosestTile(LandState.EMPTY);
-          if (empty && this.distance(empty) < 500 && this.canAffordPlow()) {
-            best = empty;
+        if (this.farmerType == FarmerType.ALL) {
+          var plowed = this.getClosestTile(LandState.PLOWED);
+          if (plowed && this.distance(plowed) < 500 && this.canAffordCrop()) {
+            best = plowed;
+          } else {
+            var empty = this.getClosestTile(LandState.EMPTY);
+            if (empty && this.distance(empty) < 500 && this.canAffordPlow()) {
+              best = empty;
+            }
           }
         }
     }
@@ -128,7 +179,7 @@ export class Farmer extends Phaser.GameObjects.Container {
       case LandState.READY:
         arr = this.farm.ready.getChildren();
         break;
-      default:
+      case LandState.EMPTY:
         arr = this.farm.empty.getChildren();
         break;
     }
@@ -137,12 +188,15 @@ export class Farmer extends Phaser.GameObjects.Container {
 
     var score = 9999999999;
     var best = null;
-    for (var i = 0; i < arr.length; i++) {
-      const tile = arr[i] as Land;
-      const tmpScore = this.getScore(tile);
-      if (tmpScore < score) {
-        score = tmpScore;
-        best = tile;
+
+    if (arr) {
+      for (var i = 0; i < arr.length; i++) {
+        const tile = arr[i] as Land;
+        const tmpScore = this.getScore(tile);
+        if (tmpScore < score) {
+          score = tmpScore;
+          best = tile;
+        }
       }
     }
 

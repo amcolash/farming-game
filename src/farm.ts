@@ -15,8 +15,6 @@ export class Farm extends Phaser.GameObjects.GameObject {
   constructor(scene: Phaser.Scene) {
     super(scene, 'farm');
 
-    scene.sys.updateList.add(this);
-
     const xPos = -this.dimensionX * this.tileSize - (this.tileSize / 2);
     const yPos = -this.dimensionY * this.tileSize - (this.tileSize / 2);
     const width = this.dimensionX * 2 * this.tileSize;
@@ -48,34 +46,29 @@ export class Farm extends Phaser.GameObjects.GameObject {
     scene.add.existing(grid);
   }
 
-  preUpdate(): void {
+  update(time: number, delta: number): void {
     for (var x = 0; x < this.farm.length; x++) {
       for (var y = 0; y < this.farm[x].length; y++) {
         const tile = this.farm[x][y];
+        tile.update(time, delta);
+
+        this.empty.remove(tile);
+        this.plowed.remove(tile);
+        this.planted.remove(tile);
+        this.ready.remove(tile);
+        
         switch(tile.land) {
           case LandState.EMPTY:
-            if (!this.empty.contains(tile)) this.empty.add(tile);
-            this.plowed.remove(tile);
-            this.planted.remove(tile);
-            this.ready.remove(tile);
+            this.empty.add(tile);
             break;
           case LandState.PLOWED:
-            this.empty.remove(tile);
-            if (!this.plowed.contains(tile)) this.plowed.add(tile);
-            this.planted.remove(tile);
-            this.ready.remove(tile);
+            this.plowed.add(tile);
             break;
           case LandState.PLANTED:
-            this.empty.remove(tile);
-            this.plowed.remove(tile);
-            if (!this.planted.contains(tile)) this.planted.add(tile);
-            this.ready.remove(tile);
+            this.planted.add(tile);
             break;
           case LandState.READY:
-            this.empty.remove(tile);
-            this.plowed.remove(tile);
-            this.planted.remove(tile);
-            if (!this.ready.contains(tile)) this.ready.add(tile);
+            this.ready.add(tile);
             break;
         }
       }
