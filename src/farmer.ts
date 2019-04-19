@@ -1,4 +1,4 @@
-import { Crops } from './crops';
+import { Crop, Crops } from './crops';
 import { Farm } from './farm';
 import { Land, LandState } from './land';
 
@@ -57,6 +57,8 @@ export class FarmerStats {
 export class Farmer extends Phaser.GameObjects.Container {
   readonly baseMoney: number = 200;
 
+  bestCrop: Crop;
+  cropImage: Phaser.GameObjects.Image;
   farmerType: FarmerType;
   farm: Farm;
   spawnLocation: Phaser.Math.Vector2;
@@ -79,6 +81,12 @@ export class Farmer extends Phaser.GameObjects.Container {
 
     this.add(new Phaser.GameObjects.Arc(scene, 0, 12, 4, 0, 360, false, type == FarmerType.ALL ? 0xff0000 : (type == FarmerType.HARVEST ? 0x00ff00 : 0x0000ff)));
     this.add(new Phaser.GameObjects.Image(scene, 0, 0, 'crops', 20));
+
+    if (this.isPlanter()) {
+      this.bestCrop = this.getBestCrop();
+      this.cropImage = new Phaser.GameObjects.Image(scene, 0, 16, 'crops', this.bestCrop.frame);
+      this.add(this.cropImage);
+    }
   }
 
   update(time: number, delta: number) {
@@ -90,10 +98,12 @@ export class Farmer extends Phaser.GameObjects.Container {
       return;
     }
 
-    if (this.isPlanter()) this.registry.set('currentCrop', this.getBestCrop());
+    if (this.isPlanter()) {
+      this.bestCrop = this.getBestCrop();
+      this.cropImage.setFrame(this.bestCrop.frame);
+    }
 
-    var tile = null;
-
+    var tile: Land = null;
     if (this.farmerType == FarmerType.ALL) {
       tile = this.getBestAllTile();
     } else if (this.isHarvester()) {
@@ -104,18 +114,22 @@ export class Farmer extends Phaser.GameObjects.Container {
 
     if (tile !== null) {
       if (this.distance(tile) < 200) {
-        switch(tile.land) {
-          case LandState.EMPTY:
-            this.wait = 125 * this.stats.plowSpeed;
-            break;
-          case LandState.PLOWED:
-            this.wait = 50 * this.stats.plantSpeed;
-            break;
-          case LandState.READY:
-            this.wait = 100 * this.stats.harvestSpeed;
-            break;
+        if (this.canInteract(tile.land)) {
+          switch(tile.land) {
+            case LandState.EMPTY:
+              tile.plow();
+              this.wait = 125 * this.stats.plowSpeed;
+              break;
+            case LandState.PLOWED:
+              tile.plant(this.bestCrop);
+              this.wait = 50 * this.stats.plantSpeed;
+              break;
+            case LandState.READY:
+              tile.harvest();
+              this.wait = 100 * this.stats.harvestSpeed;
+              break;
+          }
         }
-        if (this.canInteract(tile.land)) tile.handleClick();
       } else {
         this.scene.physics.moveTo(this, tile.sprite.x, tile.sprite.y, 60 * this.stats.movementSpeed);
       }
@@ -166,14 +180,14 @@ export class Farmer extends Phaser.GameObjects.Container {
     );
   }
 
-  getBestCrop(): number {
+  getBestCrop(): Crop {
     const money = this.registry.get('money');
     let best = 0;
     for (var i = 0; i < Crops.length; i++) {
       if (Crops[i].revenue > Crops[best].revenue && money - 3 * (Crops[i].cost + 5) >= this.baseMoney) best = i;
     }
 
-    return best;
+    return Crops[best];
   }
 
   getBestTile(land: LandState): Land {

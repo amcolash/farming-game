@@ -31,8 +31,8 @@ export class Land extends Phaser.GameObjects.GameObject {
     this.id = x.toString() + y.toString();
 
     this.sprite = scene.add.sprite(x, y, 'crops');
-    // this.sprite.setInteractive({ useHandCursor: true });
-    // this.sprite.on('pointerdown', this.handleClick.bind(this));
+    this.sprite.setInteractive({ useHandCursor: true });
+    this.sprite.on('pointerdown', this.handleClick.bind(this));
 
     this.bar = scene.add.rectangle(x - 16, y - 16, 0, 2, 0x00ee00);
   }
@@ -87,33 +87,46 @@ export class Land extends Phaser.GameObjects.GameObject {
       return;
     }
 
-    const money = this.registry.get('money');
-    
     switch(this.land) {
       case LandState.EMPTY:
-      if (money - 5 >= 0) {
-        this.registry.set('money', money - 5);
-        this.land = LandState.PLOWED;
-      }
-      break;
+        this.plow();
+        break;
       case LandState.PLOWED:
         const crop = Crops[this.registry.get('currentCrop')];
-        if (money - crop.cost >= 0) {
-          this.registry.set('money', money - crop.cost);
-          this.crop = crop;
-          this.life = crop.timeToRipe;
-          this.land = LandState.PLANTED;
-        }
+        this.plant(crop);
         break;
       case LandState.PLANTED:
         break;
       case LandState.READY:
-        this.registry.set('money', money + this.crop.revenue);
-        this.registry.set('profit', this.registry.get('profit') + this.crop.revenue - this.crop.cost - 5);
-        this.registry.values.stats[this.crop.frame]++;
-        this.crop = null;
-        this.land = LandState.EMPTY;
+        this.harvest();
         break;
     }
+  }
+
+  plow(): void {
+    const money = this.registry.get('money');
+    if (money - 5 >= 0) {
+      this.registry.set('money', money - 5);
+      this.land = LandState.PLOWED;
+    }
+  }
+
+  plant(crop: Crop): void {
+    const money = this.registry.get('money');
+    if (money - crop.cost >= 0) {
+      this.registry.set('money', money - crop.cost);
+      this.crop = crop;
+      this.life = crop.timeToRipe;
+      this.land = LandState.PLANTED;
+    }
+  }
+
+  harvest(): void {
+    const money = this.registry.get('money');
+    this.registry.set('money', money + this.crop.revenue);
+    this.registry.set('profit', this.registry.get('profit') + this.crop.revenue - this.crop.cost - 5);
+    this.registry.values.stats[this.crop.frame]++;
+    this.crop = null;
+    this.land = LandState.EMPTY;
   }
 }
