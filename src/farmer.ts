@@ -8,12 +8,59 @@ export enum FarmerType {
   HARVEST
 }
 
+export class FarmerStats {
+  harvestSpeed: number;
+  movementSpeed: number;
+  plantSpeed: number;
+  plowSpeed: number;
+
+  constructor(farmer: Farmer) {
+    var rndNums;
+    switch (farmer.farmerType) {
+      case FarmerType.HARVEST:
+        rndNums = 1;
+        break;
+      case FarmerType.PLANT:
+        rndNums = 2;
+        break;
+      default:
+        rndNums = 3;
+        break;
+    }
+
+    var rnd = [];
+    var finalVal = 1;
+    for (var i = 0; i < rndNums; i++) {
+      rnd.push(Math.random() * (1 / (rndNums + 1)));
+      finalVal -= rnd[i];
+    }
+
+    switch (farmer.farmerType) {
+      case FarmerType.HARVEST:
+        this.harvestSpeed = rnd[0];
+        break;
+      case FarmerType.PLANT:
+        this.plantSpeed = rnd[0];
+        this.plowSpeed = rnd[1];
+        break;
+      default:
+        this.harvestSpeed = rnd[0];
+        this.plantSpeed = rnd[1];
+        this.plowSpeed = rnd[2];
+        break;
+    }
+
+    this.movementSpeed = finalVal;
+  }
+}
+
 export class Farmer extends Phaser.GameObjects.Container {
   readonly baseMoney: number = 200;
 
   farmerType: FarmerType;
   farm: Farm;
   spawnLocation: Phaser.Math.Vector2;
+  stats: FarmerStats;
   registry: Phaser.Data.DataManager;
   wait: number;
   world: Phaser.Physics.Arcade.World;
@@ -26,6 +73,7 @@ export class Farmer extends Phaser.GameObjects.Container {
     this.farmerType = type;
     this.farm = farm;
     this.spawnLocation = new Phaser.Math.Vector2(x, y);
+    this.stats = new FarmerStats(this);
     this.registry = scene.game.registry;
     this.world = scene.physics.world;
 
@@ -58,20 +106,18 @@ export class Farmer extends Phaser.GameObjects.Container {
       if (this.distance(tile) < 200) {
         switch(tile.land) {
           case LandState.EMPTY:
-            this.wait = 100;
+            this.wait = 125 * this.stats.plowSpeed;
             break;
           case LandState.PLOWED:
-            this.wait = 50;
+            this.wait = 50 * this.stats.plantSpeed;
             break;
           case LandState.READY:
-            this.wait = 100;
+            this.wait = 100 * this.stats.harvestSpeed;
             break;
         }
-
-        this.wait *= (this.farmerType == FarmerType.ALL ? 1 : 0.75);
         if (this.canInteract(tile.land)) tile.handleClick();
       } else {
-        this.scene.physics.moveTo(this, tile.sprite.x, tile.sprite.y, 60);
+        this.scene.physics.moveTo(this, tile.sprite.x, tile.sprite.y, 60 * this.stats.movementSpeed);
       }
     }
   }

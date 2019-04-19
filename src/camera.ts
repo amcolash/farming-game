@@ -18,7 +18,7 @@ export class Camera extends Phaser.Physics.Arcade.Image {
     this.setCollideWorldBounds(true);
 
     scene.game.events.addListener('zoom', (zoom) => {
-      this.camera.setZoom(Phaser.Math.Clamp(this.camera.zoom + zoom * 0.2, 0.8, 3));
+      this.camera.setZoom(Phaser.Math.Clamp(this.camera.zoom + zoom * 0.2, 0.7, 3));
     });
   }
 
