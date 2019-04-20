@@ -26,19 +26,34 @@
 
       #log {
         border-left: 1px solid white;
-        margin: 0 1em;
-        padding: 0 1em;
+        margin-left: 1em;
         height: 100vh;
-        max-width: 30em;
+        max-width: 35em;
         overflow: hidden;
+        display: none;
+        flex-direction: column;
+      }
+
+      #log h2 {
+        padding: 0 1em 0.4em;
+        border-bottom: 1px solid rgb(255, 255, 255, 0.2);
       }
 
       #log ul {
         list-style-type: none;
         padding: 0;
         margin: 0;
-        height: calc(100% - 5em);
+        height: 100%;
         overflow-y: auto;
+      }
+
+      #log li {
+        padding: 0.25em 1em 0.25em;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      #log li:last-child {
+        border-bottom: none;
       }
 
       @media only screen and (max-width: 850px) {
@@ -50,7 +65,7 @@
   </head>
   <body>
     <div id="game"></div>
-    <div id="log" style="display: none;">
+    <div id="log">
       <h2>Changes</h2>
       <ul></ul>
     </div>

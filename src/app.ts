@@ -57,7 +57,7 @@ function getLog() {
       logList.appendChild(item);
     });
 
-    document.getElementById('log').setAttribute('style', 'display: initial;');
+    document.getElementById('log').setAttribute('style', 'display: flex;');
   }).catch(err => {
     console.error(err);
   });
