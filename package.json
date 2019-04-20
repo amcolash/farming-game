@@ -14,12 +14,16 @@
   "author": "Andrew McOlash",
   "license": "MIT",
   "devDependencies": {
-    "phaser": "^3.16.2",
     "phaser3-docs": "github:photonstorm/phaser3-docs",
     "ts-loader": "^5.3.3",
-    "typescript": "^3.4.1",
-    "webpack": "^4.29.6",
+    "typescript": "^3.4.4",
+    "webpack": "^4.30.0",
     "webpack-cli": "^3.3.0",
-    "webpack-dev-server": "^3.2.1"
+    "webpack-dev-server": "^3.3.1"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "moment": "^2.24.0",
+    "phaser": "^3.16.2"
   }
 }
