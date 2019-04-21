@@ -45,7 +45,7 @@ window.onload = () => {
 };
 
 function getLog() {
-  if (window.location.href.indexOf('localhost') === -1) {
+  if (window.location.href.indexOf('127.0.0.1') === -1) {
     const url = "https://api.github.com/repos/amcolash/farming-game/commits";
     axios.get(url).then(response => {
       const data = response.data.map(i => { return { date: moment(i.commit.author.date).fromNow(), message: i.commit.message }; });
