@@ -5,6 +5,9 @@ export class LoadingScene extends Phaser.Scene {
 
   loadAssets(): void {
     this.load.spritesheet('crops', 'assets/images/crops.png', { frameWidth: 32, frameHeight: 32 });
+    this.load.spritesheet('farmer_a', 'assets/images/farmer_a.png', { frameWidth: 32, frameHeight: 36 });
+    this.load.spritesheet('farmer_b', 'assets/images/farmer_b.png', { frameWidth: 32, frameHeight: 36 });
+    this.load.spritesheet('farmer_c', 'assets/images/farmer_c.png', { frameWidth: 32, frameHeight: 36 });
   }
   
   preload(): void {

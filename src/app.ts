@@ -45,20 +45,22 @@ window.onload = () => {
 };
 
 function getLog() {
-  const url = "https://api.github.com/repos/amcolash/farming-game/commits";
-  axios.get(url).then(response => {
-    const data = response.data.map(i => { return { date: moment(i.commit.author.date).fromNow(), message: i.commit.message }; });
-
-    const logList = document.getElementsByTagName('ul')[0];
-    data.forEach(commit => {
-      const item = document.createElement('li');
-      item.innerText = commit.date + ": " + commit.message;
-
-      logList.appendChild(item);
+  if (window.location.href.indexOf('localhost') !== -1) {
+    const url = "https://api.github.com/repos/amcolash/farming-game/commits";
+    axios.get(url).then(response => {
+      const data = response.data.map(i => { return { date: moment(i.commit.author.date).fromNow(), message: i.commit.message }; });
+  
+      const logList = document.getElementsByTagName('ul')[0];
+      data.forEach(commit => {
+        const item = document.createElement('li');
+        item.innerText = commit.date + ": " + commit.message;
+  
+        logList.appendChild(item);
+      });
+  
+      document.getElementById('log').setAttribute('style', 'display: flex;');
+    }).catch(err => {
+      console.error(err);
     });
-
-    document.getElementById('log').setAttribute('style', 'display: flex;');
-  }).catch(err => {
-    console.error(err);
-  });
+  }
 }
