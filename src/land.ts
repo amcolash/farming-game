@@ -14,7 +14,6 @@ export class Land extends Phaser.GameObjects.GameObject {
   sprite: Phaser.GameObjects.Sprite;
   id: string;
   bar: Phaser.GameObjects.Rectangle;
-  hover: Phaser.GameObjects.Rectangle;
 
   land: LandState;
   life: number;
@@ -34,13 +33,10 @@ export class Land extends Phaser.GameObjects.GameObject {
     this.sprite = scene.add.sprite(x, y, 'crops', 19);
     this.sprite.setInteractive({ useHandCursor: true });
     this.sprite.on('pointerdown', this.handleClick.bind(this));
-    this.sprite.on('pointerover', () => this.hover.setAlpha(0.25));
-    this.sprite.on('pointerout', () => this.hover.setAlpha(0));
+    this.sprite.on('pointerover', () => scene.events.emit('hover', this));
 
+    if (x === 0 && y === 0) scene.add.rectangle(x, y, 32, 32).setStrokeStyle(1, 0xff0000, 0.75);
     this.bar = scene.add.rectangle(x - 16, y - 16, 0, 2, 0x00ee00);
-    this.hover = scene.add.rectangle(x, y, 32, 32, 0x00ddbb).setAlpha(0);
-
-    if (x === 0 && y === 0) scene.add.rectangle(x, y, 32, 32, 0xffffff).setAlpha(0.15);
   }
 
   update(time: number, delta: number) {
@@ -94,25 +90,31 @@ export class Land extends Phaser.GameObjects.GameObject {
 
   handleClick() {
     if (this.scene.game.input.activePointer.rightButtonDown()) {
-      this.crop = null;
-      this.land = LandState.EMPTY;
-      return;
+      this.clear();
+    } else {
+      switch(this.land) {
+        case LandState.EMPTY:
+          this.plow();
+          break;
+        case LandState.PLOWED:
+          const crop = Crops[this.registry.get('currentCrop')];
+          this.plant(crop);
+          break;
+        case LandState.PLANTED:
+          break;
+        case LandState.READY:
+          this.harvest();
+          break;
+      }
     }
 
-    switch(this.land) {
-      case LandState.EMPTY:
-        this.plow();
-        break;
-      case LandState.PLOWED:
-        const crop = Crops[this.registry.get('currentCrop')];
-        this.plant(crop);
-        break;
-      case LandState.PLANTED:
-        break;
-      case LandState.READY:
-        this.harvest();
-        break;
-    }
+    this.scene.events.emit('hover', this);
+  }
+
+  clear(): void {
+    this.crop = null;
+    this.land = LandState.EMPTY;
+    this.updateTile();
   }
 
   plow(): void {

@@ -36,16 +36,12 @@ export class Farm extends Phaser.GameObjects.GameObject {
         const offsetY = y * this.tileSize;
 
         const tile = new Land(scene, offsetX, offsetY);
-        // if (x === 0 && y === 0) tile.land = LandState.PLOWED;
         this.empty.set(tile);
         this.farm[x + this.dimensionX][y + this.dimensionY] = tile;
       }
     }
 
-    // const grid = new Phaser.GameObjects.Grid(scene, -this.tileSize / 2, -this.tileSize / 2, width, height, this.tileSize, this.tileSize, 0x000000, 0, 0xffffff, 0.1);
-    // scene.add.existing(grid);
-
-    // scene.events.addListener('tileUpdate', (tile: Land) => this.tileUpdated.bind(this, tile));
+    scene.add.grid(-this.tileSize / 2, -this.tileSize / 2, width, height, this.tileSize, this.tileSize, 0x000000, 0, 0xffffff, 0.1);
     scene.events.addListener('tileUpdate', (tile: Land) => this.tileUpdated(tile));
   }
 

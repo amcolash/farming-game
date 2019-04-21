@@ -35,5 +35,7 @@ export class Camera extends Phaser.Physics.Arcade.Image {
 
     if (left && !right) this.setVelocityX(-this.speed * this.world.timeScale);
     if (!left && right) this.setVelocityX(this.speed * this.world.timeScale);
+
+    if (up || down || left || right) this.scene.events.emit('cameraMove');
   }
 }

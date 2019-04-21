@@ -1,6 +1,7 @@
 import { Camera } from './camera';
 import { Farm } from './farm';
 import { Farmer, FarmerType } from './farmer';
+import { Tooltip } from './tooltip';
 
 export class FarmScene extends Phaser.Scene {
   camera: Camera;
@@ -9,6 +10,8 @@ export class FarmScene extends Phaser.Scene {
   farmer1: Farmer;
   farmer2: Farmer;
   farmer3: Farmer;
+
+  tooltip: Tooltip;
 
   constructor() {
     super('FarmScene');
@@ -21,6 +24,8 @@ export class FarmScene extends Phaser.Scene {
     // this.farmer1 = new Farmer(this, 0, 0, this.farm, FarmerType.ALL);
     this.farmer2 = new Farmer(this, 32, 0, this.farm, FarmerType.PLANT);
     this.farmer3 = new Farmer(this, 64, 0, this.farm, FarmerType.HARVEST);
+
+    this.tooltip = new Tooltip(this);
 
     // TODO: Figure out dancing and fighting farmers
     // const farmer1 = new Farmer(this, 350, 350, this.farm);
@@ -43,6 +48,7 @@ export class FarmScene extends Phaser.Scene {
     this.game.registry.set('life', this.game.registry.get('life') + delta * (1 / this.physics.world.timeScale));
 
     this.camera.update();
+    this.tooltip.update();
     
     this.farm.update(time, delta);
 
