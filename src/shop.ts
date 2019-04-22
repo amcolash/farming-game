@@ -1,19 +1,66 @@
 import { Crops } from './crops';
 import { HUDScene } from './hudScene';
+import { TextButton } from './textButton';
+import { FarmerType, Farmer, Farmers } from './farmer';
+import { FarmScene } from './farmScene';
+import { BlendModes } from 'phaser';
+import { Util } from './util';
 
 export class Shop extends Phaser.GameObjects.GameObject {
+  crops: Phaser.GameObjects.Container;
+  farmers: Phaser.GameObjects.Container;
+
+  farmerImages
+
   constructor(scene: Phaser.Scene) {
     super(scene, 'shop');
 
+    this.crops = scene.add.container(0, 0);
+    this.farmers = scene.add.container(0, 0).setAlpha(0);
+
+    this.generateCrops();
+    this.generateFarmers();
+
+    new TextButton(scene, 30, 60, 'Crops', () => this.selectCrops()).setOrigin(0.5, 0.5).setAngle(270);
+    new TextButton(scene, 30, 180, 'Farmers', () => this.selectFarmers()).setOrigin(0.5, 0.5).setAngle(270);
+  }
+
+  selectCrop(index: number) {
+    this.scene.game.registry.set('currentCrop', index);
+    (this.scene.game.scene.getScene('HUDScene') as HUDScene).toggleShop();
+  }
+
+  selectFarmer(type: FarmerType, cost: number) {
+    const farmScene = this.scene.game.scene.getScene('FarmScene') as FarmScene;
+    const farmer = new Farmer(farmScene, 0, 0, farmScene.farm, type);
+    farmScene.farmers.push(farmer);
+    (this.scene.game.scene.getScene('HUDScene') as HUDScene).toggleShop();
+  }
+
+  selectCrops(): void {
+    this.crops.setAlpha(1);
+    this.farmers.setAlpha(0);
+  }
+
+  selectFarmers(): void {
+    this.generateFarmers();
+
+    this.crops.setAlpha(0);
+    this.farmers.setAlpha(1);
+  }
+
+  generateCrops(): void {
     for (var i = 0; i < Crops.length; i++) {
       const index = i;
       const crop = Crops[index];
 
-      const sprite = this.scene.add.sprite(100, i * 100 + 50, 'crops', crop.frame);
+      const sprite = new Phaser.GameObjects.Sprite(this.scene, 120, i * 100 + 50, 'crops', crop.frame);
       sprite.setScale(2.5);
+      this.crops.add(sprite);
       
       const data = crop.name + '(' + crop.timeToRipe + ' days)' + '\ncost: $' + crop.cost.toString() + '\nrevenue: $' + crop.revenue.toString();
-      const text = this.scene.add.text(180, i * 100 + 20, data, { fontSize: 24 });
+      const text = new Phaser.GameObjects.Text(this.scene, 200, i * 100 + 20, data, { fontSize: 24 });
+      this.crops.add(text);
 
       sprite.setInteractive({ useHandCursor: true })
         .on('pointerup', () => this.selectCrop(index));
@@ -22,8 +69,26 @@ export class Shop extends Phaser.GameObjects.GameObject {
     }
   }
 
-  selectCrop(index: number) {
-    this.scene.game.registry.set('currentCrop', index);
-    (this.scene.game.scene.getScene('HUDScene') as HUDScene).toggleShop();
+  generateFarmers(): void {
+    const money = this.scene.game.registry.get('money');
+
+    for (var i = 0; i < Farmers.length; i++) {
+      const farmer = Farmers[i];
+      const sprite = new Phaser.GameObjects.Sprite(this.scene, 120, i * 130 + 60, Farmer.getSprite(farmer.type));
+      sprite.setScale(2);
+      // if (money < farmer.cost) sprite.setTint(0xaaaaaa);
+      this.farmers.add(sprite);
+
+      const data = farmer.text + '\n\nCost: $' + Util.numberWithCommas(farmer.cost);
+      const text = new Phaser.GameObjects.Text(this.scene, 200, i * 130 + 20, data, { fontSize: 20, wordWrap: { width: 280 } });
+      this.farmers.add(text);
+
+      if (money >= farmer.cost) {
+        sprite.setInteractive({ useHandCursor: true })
+          .on('pointerup', () => this.selectFarmer(farmer.type, farmer.cost));
+        text.setInteractive({ useHandCursor: true })
+          .on('pointerup', () => this.selectFarmer(farmer.type, farmer.cost));
+      }
+    }
   }
 }

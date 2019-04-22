@@ -8,6 +8,30 @@ export enum FarmerType {
   HARVEST
 }
 
+export interface FarmerData {
+  type: FarmerType;
+  cost: number;
+  text: string;
+}
+
+export let Farmers: FarmerData[] = [
+  {
+    type: FarmerType.ALL,
+    cost: 10000,
+    text: 'An all around hard worker who plants and harvests crops'
+  },
+  {
+    type: FarmerType.PLANT,
+    cost: 8500,
+    text: 'A farmer who specializes in only planting crops'
+  },
+  {
+    type: FarmerType.HARVEST,
+    cost: 8500,
+    text: 'A farmer who specializes in only harvesting crops'
+  }
+]
+
 export class FarmerStats {
   harvestSpeed: number;
   movementSpeed: number;
@@ -81,12 +105,20 @@ export class Farmer extends Phaser.GameObjects.Container {
     this.world = scene.physics.world;
 
     this.add(new Phaser.GameObjects.Arc(scene, 0, 12, 4, 0, 360, false, type == FarmerType.ALL ? 0xff0000 : (type == FarmerType.HARVEST ? 0x00ff00 : 0x0000ff)));
-    this.add(new Phaser.GameObjects.Image(scene, 0, 0, type == FarmerType.ALL ? 'farmer_a' : (type == FarmerType.HARVEST ? 'farmer_b' : 'farmer_c'), 0));
+    this.add(new Phaser.GameObjects.Image(scene, 0, 0, Farmer.getSprite(type), 0));
 
     if (this.isPlanter()) {
       this.bestCrop = this.getBestCrop();
       this.cropImage = new Phaser.GameObjects.Image(scene, 0, -32, 'crops', this.bestCrop.frame);
       this.add(this.cropImage);
+    }
+  }
+
+  static getSprite(type: FarmerType): string {
+    switch (type) {
+      case FarmerType.ALL: return 'farmer_a';
+      case FarmerType.HARVEST: return 'farmer_b';
+      case FarmerType.PLANT: return 'farmer_c';
     }
   }
 

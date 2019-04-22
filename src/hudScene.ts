@@ -81,9 +81,9 @@ export class HUDScene extends Phaser.Scene {
   update(time: number, delta: number): void {
     this.crop.setFrame(Crops[this.registry.get('currentCrop')].frame);
     this.life.setText('Life: ' + Util.getTime(this.registry.get('life')));
-    this.money.setText('$' + this.registry.get('money'));
-    this.profit.setText('Profit: $' + this.registry.get('profit'));
-    this.value.setText('Farm Value: $' + this.getFarmValue());
+    this.money.setText('$' + Util.numberWithCommas(this.registry.get('money')));
+    this.profit.setText('Profit: $' + Util.numberWithCommas(this.registry.get('profit')));
+    this.value.setText('Farm Value: $' + Util.numberWithCommas(this.getFarmValue()));
 
     this.stats.visible = !this.isShop;
     
