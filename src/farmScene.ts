@@ -7,9 +7,7 @@ export class FarmScene extends Phaser.Scene {
   camera: Camera;
   farm: Farm;
 
-  farmer1: Farmer;
-  farmer2: Farmer;
-  farmer3: Farmer;
+  farmers: Farmer[] = [];
 
   tooltip: Tooltip;
 
@@ -21,9 +19,9 @@ export class FarmScene extends Phaser.Scene {
     this.farm = new Farm(this);
     this.camera = new Camera(this, 0, 0);
     
-    // this.farmer1 = new Farmer(this, 0, 0, this.farm, FarmerType.ALL);
-    this.farmer2 = new Farmer(this, 32, 0, this.farm, FarmerType.PLANT);
-    this.farmer3 = new Farmer(this, 64, 0, this.farm, FarmerType.HARVEST);
+    // this.farmers.push(new Farmer(this, 0, 0, this.farm, FarmerType.ALL));
+    this.farmers.push(new Farmer(this, 32, 0, this.farm, FarmerType.PLANT));
+    this.farmers.push(new Farmer(this, 64, 0, this.farm, FarmerType.HARVEST));
 
     this.tooltip = new Tooltip(this);
 
@@ -51,10 +49,7 @@ export class FarmScene extends Phaser.Scene {
     this.tooltip.update();
     
     this.farm.update(time, delta);
-
-    if (this.farmer1) this.farmer1.update(time, delta);
-    if (this.farmer2) this.farmer2.update(time, delta);
-    if (this.farmer3) this.farmer3.update(time, delta);
+    this.farmers.forEach(farmer => farmer.update(time, delta));
 
     this.frustumCull();
   }
