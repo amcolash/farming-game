@@ -2,6 +2,7 @@ import { Crops } from './crops';
 import { TextButton } from './textButton';
 import { Farm } from './farm';
 import { FarmScene } from './farmScene';
+import { Util } from './util';
 
 export class HUDScene extends Phaser.Scene {
   registry: Phaser.Data.DataManager;
@@ -79,7 +80,7 @@ export class HUDScene extends Phaser.Scene {
 
   update(time: number, delta: number): void {
     this.crop.setFrame(Crops[this.registry.get('currentCrop')].frame);
-    this.life.setText('Life: ' + this.getTime(this.registry.get('life')));
+    this.life.setText('Life: ' + Util.getTime(this.registry.get('life')));
     this.money.setText('$' + this.registry.get('money'));
     this.profit.setText('Profit: $' + this.registry.get('profit'));
     this.value.setText('Farm Value: $' + this.getFarmValue());
@@ -101,18 +102,6 @@ export class HUDScene extends Phaser.Scene {
     this.farm.planted.entries.forEach(t => value += t.crop.revenue);
 
     return value;
-  }
-
-  getTime(ms: number): string {
-    const sec = ms / 1000;
-    const min = sec / 60;
-    const hour = min / 60;
-    const day = hour / 24;
-
-    if (sec < 60) return sec.toFixed(0) + 's';
-    if (min < 60) return min.toFixed(0) + 'm';
-    if (hour < 60) return hour.toFixed(1) + 'h';
-    return day.toFixed(1) + 'd';
   }
 
   toggleShop(): void {

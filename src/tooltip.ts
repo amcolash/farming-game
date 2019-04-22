@@ -1,5 +1,6 @@
 import { Land, LandState } from './land';
 import { LEFT } from 'phaser';
+import { Util } from './util';
 
 export class Tooltip extends Phaser.GameObjects.Container {
   current: Land;
@@ -47,7 +48,7 @@ export class Tooltip extends Phaser.GameObjects.Container {
         if (this.current.life > 0) t += '\nTo Ripe: ' + this.current.life.toFixed(0) + 's';
         if (this.current.life < 0) t += '\nTo Death: ' + (this.current.crop.timeToDeath + this.current.life).toFixed(0) + 's';
       }
-      this.text.setText(this.titleCase(t));
+      this.text.setText(Util.titleCase(t));
       
       this.info.alpha = 1;
     } else {
@@ -58,11 +59,5 @@ export class Tooltip extends Phaser.GameObjects.Container {
   hideTooltip() {
     this.alpha = 0;
     this.current = null;
-  }
-
-  titleCase(str) {
-    return str.replace(/\w\S*/g, txt => {
-      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-    });
   }
 }
