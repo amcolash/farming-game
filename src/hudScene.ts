@@ -1,9 +1,12 @@
 import { Crops } from './crops';
 import { TextButton } from './textButton';
+import { Farm } from './farm';
+import { FarmScene } from './farmScene';
 
 export class HUDScene extends Phaser.Scene {
   registry: Phaser.Data.DataManager;
   isShop: boolean;
+  farm: Farm;
 
   button: TextButton;
   crop: Phaser.GameObjects.Sprite;
@@ -12,6 +15,7 @@ export class HUDScene extends Phaser.Scene {
   planted: Phaser.GameObjects.Text;
   profit: Phaser.GameObjects.Text;
   speed: Phaser.GameObjects.Text;
+  value: Phaser.GameObjects.Text;
 
   stats: Phaser.GameObjects.Container;
   bars: Phaser.GameObjects.Rectangle[];
@@ -30,7 +34,7 @@ export class HUDScene extends Phaser.Scene {
     this.add.rectangle(0, height - 100, width, 100, 0x000000).setInteractive({ cursor: 'default' }).setOrigin(0, 0);
     this.add.rectangle(0, height - 102, width, 2, 0x777777).setOrigin(0, 0);
 
-    this.button = new TextButton(this, 20, height - 40, this.isShop ? 'Back' : 'Shop', () => this.toggleShop());
+    this.button = new TextButton(this, 20, height - 28, this.isShop ? 'Back' : 'Shop', () => this.toggleShop());
     this.life = this.add.text(20, height - 90, 'Life: 0');
     this.profit = this.add.text(20, height - 70, 'Profit: $0');
     this.crop = this.add.sprite(width / 2 - 8, height - 35, 'crops', Crops[this.registry.get('currentCrop')].frame);
@@ -41,7 +45,7 @@ export class HUDScene extends Phaser.Scene {
     new TextButton(this, width / 2 - 32, height - 80, "-", () => this.game.events.emit('zoom', -1));
     new TextButton(this, width / 2 - 4, height - 80, "+", () => this.game.events.emit('zoom', 1));
     
-    this.money = this.add.text(width - 20, height - 40, '$0', { fontSize: 24 });
+    this.money = this.add.text(width - 20, height - 28, '$0', { fontSize: 24 });
     this.money.setOrigin(1, 0);
 
     this.planted = this.add.text(width - 20, height - 90, 'Planted: 0');
@@ -55,6 +59,9 @@ export class HUDScene extends Phaser.Scene {
     this.stats = this.add.container(20, height - 125);
     this.stats.add(new Phaser.GameObjects.Rectangle(this, -20, 23, 200, 115, 0x000000, 0.35).setOrigin(0, 1));
     
+    this.farm = (this.game.scene.getScene('FarmScene') as FarmScene).farm;
+    this.value = this.add.text(20, height - 50, 'Farm Value: $0');
+
     this.bars = [];
     const sorted = Crops.sort((a, b) => { return a.frame - b.frame });
     for (var i = 0; i < sorted.length; i++) {
@@ -75,6 +82,7 @@ export class HUDScene extends Phaser.Scene {
     this.life.setText('Life: ' + this.getTime(this.registry.get('life')));
     this.money.setText('$' + this.registry.get('money'));
     this.profit.setText('Profit: $' + this.registry.get('profit'));
+    this.value.setText('Farm Value: $' + this.getFarmValue());
 
     this.stats.visible = !this.isShop;
     
@@ -86,6 +94,13 @@ export class HUDScene extends Phaser.Scene {
         else this.bars[i].height = 2 + 47 * (stats[i] / total);
       }
     }
+  }
+
+  getFarmValue(): number {
+    var value = this.farm.plowed.size * 5;
+    this.farm.planted.entries.forEach(t => value += t.crop.revenue);
+
+    return value;
   }
 
   getTime(ms: number): string {
