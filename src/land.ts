@@ -63,6 +63,15 @@ export class Land extends Phaser.GameObjects.GameObject {
       }
     } else {
       this.bar.alpha = 0;
+
+      if (this.land == LandState.PLOWED) {
+        if (this.life > 0) {
+          this.life -= (delta / 1000) * (1 / this.world.timeScale);
+        } else {
+          this.land = LandState.EMPTY;
+          this.updateTile();
+        }
+      }
     }
   }
 
@@ -122,6 +131,7 @@ export class Land extends Phaser.GameObjects.GameObject {
     if (money - 5 >= 0) {
       this.registry.set('money', money - 5);
       this.land = LandState.PLOWED;
+      this.life = 90;
       this.updateTile();
     }
   }
