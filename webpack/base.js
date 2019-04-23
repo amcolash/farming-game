@@ -15,6 +15,11 @@ module.exports = {
   resolve: {
     extensions: [ '.ts', '.tsx', '.js' ],
   },
+  output: {
+    filename: 'app.js',
+    path: path.resolve(__dirname, '../dist'),
+    publicPath: '/dist/'
+  },
   devServer: {
     contentBase: path.join(__dirname, '../'),
     compress: true,
