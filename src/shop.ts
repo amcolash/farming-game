@@ -3,14 +3,14 @@ import { HUDScene } from './hudScene';
 import { TextButton } from './textButton';
 import { FarmerType, Farmer, Farmers } from './farmer';
 import { FarmScene } from './farmScene';
-import { BlendModes } from 'phaser';
 import { Util } from './util';
 
 export class Shop extends Phaser.GameObjects.GameObject {
   crops: Phaser.GameObjects.Container;
   farmers: Phaser.GameObjects.Container;
 
-  farmerImages
+  cropsButton: TextButton;
+  farmersButton: TextButton;
 
   constructor(scene: Phaser.Scene) {
     super(scene, 'shop');
@@ -21,8 +21,10 @@ export class Shop extends Phaser.GameObjects.GameObject {
     this.generateCrops();
     this.generateFarmers();
 
-    new TextButton(scene, 30, 60, 'Crops', () => this.selectCrops()).setOrigin(0.5, 0.5).setAngle(270);
-    new TextButton(scene, 30, 180, 'Farmers', () => this.selectFarmers()).setOrigin(0.5, 0.5).setAngle(270);
+    this.cropsButton = new TextButton(scene, 30, 60, 'Crops', () => this.selectCrops()).setOrigin(0.5, 0.5).setAngle(270);
+    this.farmersButton = new TextButton(scene, 30, 180, 'Farmers', () => this.selectFarmers()).setOrigin(0.5, 0.5).setAngle(270);
+
+    this.cropsButton.setSelected(true);
   }
 
   selectCrop(index: number) {
@@ -38,12 +40,16 @@ export class Shop extends Phaser.GameObjects.GameObject {
   }
 
   selectCrops(): void {
+    this.cropsButton.setSelected(true);
+    this.farmersButton.setSelected(false);
+
     this.crops.setAlpha(1);
     this.farmers.setAlpha(0);
   }
 
   selectFarmers(): void {
-    this.generateFarmers();
+    this.cropsButton.setSelected(false);
+    this.farmersButton.setSelected(true);
 
     this.crops.setAlpha(0);
     this.farmers.setAlpha(1);
