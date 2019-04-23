@@ -76,12 +76,15 @@ export class Shop extends Phaser.GameObjects.GameObject {
       const farmer = Farmers[i];
       const sprite = new Phaser.GameObjects.Sprite(this.scene, 120, i * 130 + 60, Farmer.getSprite(farmer.type));
       sprite.setScale(2);
-      // if (money < farmer.cost) sprite.setTint(0xaaaaaa);
+      if (money < farmer.cost) sprite.setPipeline('grayscale');
       this.farmers.add(sprite);
 
-      const data = farmer.text + '\n\nCost: $' + Util.numberWithCommas(farmer.cost);
-      const text = new Phaser.GameObjects.Text(this.scene, 200, i * 130 + 20, data, { fontSize: 20, wordWrap: { width: 280 } });
+      const text = new Phaser.GameObjects.Text(this.scene, 200, i * 130 + 20, farmer.text, { fontSize: 20, wordWrap: { width: 280 } });
       this.farmers.add(text);
+
+      const cost = 'Cost: $' + Util.numberWithCommas(farmer.cost);
+      const price = new Phaser.GameObjects.Text(this.scene, 200, i * 130 + 90, cost, { fontSize: 20, color: money >= farmer.cost ? 'white' : 'red' });
+      this.farmers.add(price);
 
       if (money >= farmer.cost) {
         sprite.setInteractive({ useHandCursor: true })

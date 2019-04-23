@@ -105,11 +105,11 @@ export class Farmer extends Phaser.GameObjects.Container {
     this.world = scene.physics.world;
 
     this.add(new Phaser.GameObjects.Arc(scene, 0, 12, 4, 0, 360, false, type == FarmerType.ALL ? 0xff0000 : (type == FarmerType.HARVEST ? 0x00ff00 : 0x0000ff)));
-    this.add(new Phaser.GameObjects.Image(scene, 0, 0, Farmer.getSprite(type), 0));
+    this.add(new Phaser.GameObjects.Sprite(scene, 0, 0, Farmer.getSprite(type), 0));
 
     if (this.isPlanter()) {
       this.bestCrop = this.getBestCrop();
-      this.cropImage = new Phaser.GameObjects.Image(scene, 0, -32, 'crops', this.bestCrop.frame);
+      this.cropImage = new Phaser.GameObjects.Sprite(scene, 0, -32, 'crops', this.bestCrop.frame);
       this.add(this.cropImage);
     }
   }

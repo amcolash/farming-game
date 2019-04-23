@@ -7,6 +7,7 @@ import { FarmScene } from './farmScene';
 import { HUDScene } from './hudScene';
 import { LoadingScene } from './loadingScene';
 import { ShopScene } from './shopScene';
+import { GrayscalePipeline } from "./grayscalePipeline";
 
 const config: GameConfig = {
   title: 'Farming Game',
@@ -36,6 +37,9 @@ export class FarmingGame extends Phaser.Game {
 
     // Disable normal right click
     this.input.mouse.disableContextMenu();
+
+    // Load grayscale pipeline
+    (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).addPipeline('grayscale', new GrayscalePipeline(this));
   }
 }
 
