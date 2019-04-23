@@ -1,6 +1,7 @@
 const path = require('path');
 
 module.exports = {
+  mode: 'development',
   entry: './src/app.ts',
   module: {
     rules: [
@@ -14,17 +15,11 @@ module.exports = {
   resolve: {
     extensions: [ '.ts', '.tsx', '.js' ],
   },
-  output: {
-    filename: 'app.js',
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: '/dist/'
-  },
   devServer: {
-    contentBase: path.join(__dirname),
+    contentBase: path.join(__dirname, '../'),
     compress: true,
     port: 9000,
     open: true,
     host: '127.0.0.1'
-  },
-  mode: 'development'
+  }
 };
