@@ -37,6 +37,7 @@ export class Shop extends Phaser.GameObjects.GameObject {
     const farmer = new Farmer(farmScene, 0, 0, farmScene.farm, type);
     farmScene.farmers.push(farmer);
     (this.scene.game.scene.getScene('HUDScene') as HUDScene).toggleShop();
+    this.scene.game.events.emit('farmerUpdate');
   }
 
   selectCrops(): void {

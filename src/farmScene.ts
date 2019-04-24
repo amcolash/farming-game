@@ -21,9 +21,9 @@ export class FarmScene extends Phaser.Scene {
     
     // TODO: Figure out dancing and fighting farmers
     // this.physics.add.collider(this.farmer, farmer1);
-    // this.farmers.push(new Farmer(this, 0, 0, this.farm, FarmerType.ALL));
-    // this.farmers.push(new Farmer(this, 32, 0, this.farm, FarmerType.PLANT));
-    this.farmers.push(new Farmer(this, 64, 0, this.farm, FarmerType.HARVEST));
+    this.farmers.push(new Farmer(this, 0, 0, this.farm, FarmerType.ALL));
+    this.farmers.push(new Farmer(this, 32, 0, this.farm, FarmerType.PLANTER));
+    this.farmers.push(new Farmer(this, 64, 0, this.farm, FarmerType.HARVESTER));
     
     this.tooltip = new Tooltip(this);
 

@@ -1,11 +1,12 @@
 import { Crop, Crops } from './crops';
 import { Farm } from './farm';
 import { Land, LandState } from './land';
+import { Names } from './names';
 
 export enum FarmerType {
   ALL,
-  PLANT,
-  HARVEST
+  PLANTER,
+  HARVESTER
 }
 
 export interface FarmerData {
@@ -21,30 +22,33 @@ export let Farmers: FarmerData[] = [
     text: 'An all around hard worker who plants and harvests crops'
   },
   {
-    type: FarmerType.PLANT,
+    type: FarmerType.PLANTER,
     cost: 8500,
     text: 'A farmer who specializes in only planting crops'
   },
   {
-    type: FarmerType.HARVEST,
+    type: FarmerType.HARVESTER,
     cost: 8500,
     text: 'A farmer who specializes in only harvesting crops'
   }
 ]
 
 export class FarmerStats {
+  name: string;
   harvestSpeed: number;
   movementSpeed: number;
   plantSpeed: number;
   plowSpeed: number;
 
   constructor(farmer: Farmer) {
+    this.name = Names[Math.floor(Math.random() * Names.length)];
+
     var rndNums;
     switch (farmer.farmerType) {
-      case FarmerType.HARVEST:
+      case FarmerType.HARVESTER:
         rndNums = 1;
         break;
-      case FarmerType.PLANT:
+      case FarmerType.PLANTER:
         rndNums = 2;
         break;
       default:
@@ -61,10 +65,10 @@ export class FarmerStats {
     }
 
     switch (farmer.farmerType) {
-      case FarmerType.HARVEST:
+      case FarmerType.HARVESTER:
         this.harvestSpeed = 1 + rnd[0];
         break;
-      case FarmerType.PLANT:
+      case FarmerType.PLANTER:
         this.plantSpeed = 1 + rnd[0];
         this.plowSpeed = 1 + rnd[1];
         break;
@@ -82,7 +86,6 @@ export class FarmerStats {
 export class Farmer extends Phaser.GameObjects.Container {
   readonly baseMoney: number = 200;
 
-  bestCrop: Crop;
   cropImage: Phaser.GameObjects.Image;
   farmerType: FarmerType;
   farm: Farm;
@@ -104,16 +107,21 @@ export class Farmer extends Phaser.GameObjects.Container {
     this.registry = scene.game.registry;
     this.world = scene.physics.world;
 
-    this.add(new Phaser.GameObjects.Arc(scene, 0, 12, 4, 0, 360, false, type == FarmerType.ALL ? 0xff0000 : (type == FarmerType.HARVEST ? 0x00ff00 : 0x0000ff)));
+    this.add(new Phaser.GameObjects.Arc(scene, 0, 12, 4, 0, 360, false, type == FarmerType.ALL ? 0xff0000 : (type == FarmerType.HARVESTER ? 0x00ff00 : 0x0000ff)));
 
     const sprite = new Phaser.GameObjects.Sprite(scene, 0, 0, Farmer.getSprite(type), 0);
-    sprite.setInteractive({ useHandCursor: true });
-    sprite.on('pointerover', () => scene.events.emit('hoverFarmer'));
     this.add(sprite);
 
+    scene.game.events.on('hoverFarmer', (farmer) => {
+      if (farmer === this) {
+        sprite.setTint(0xaaaaff);
+      } else {
+        sprite.setTint(0xffffff);
+      }
+    });
+
     if (this.isPlanter()) {
-      this.bestCrop = this.getBestCrop();
-      this.cropImage = new Phaser.GameObjects.Sprite(scene, 0, -32, 'crops', this.bestCrop.frame);
+      this.cropImage = new Phaser.GameObjects.Sprite(scene, 0, -32, 'crops', this.getBestCrop().frame);
       this.add(this.cropImage);
     }
   }
@@ -121,8 +129,8 @@ export class Farmer extends Phaser.GameObjects.Container {
   static getSprite(type: FarmerType): string {
     switch (type) {
       case FarmerType.ALL: return 'farmer_a';
-      case FarmerType.HARVEST: return 'farmer_b';
-      case FarmerType.PLANT: return 'farmer_c';
+      case FarmerType.HARVESTER: return 'farmer_b';
+      case FarmerType.PLANTER: return 'farmer_c';
     }
   }
 
@@ -136,8 +144,7 @@ export class Farmer extends Phaser.GameObjects.Container {
     }
 
     if (this.isPlanter()) {
-      this.bestCrop = this.getBestCrop();
-      this.cropImage.setFrame(this.bestCrop.frame);
+      this.cropImage.setFrame(this.getBestCrop().frame);
     }
 
     var tile: Land = null;
@@ -158,7 +165,7 @@ export class Farmer extends Phaser.GameObjects.Container {
               this.wait = 125 * this.stats.plowSpeed;
               break;
             case LandState.PLOWED:
-              tile.plant(this.bestCrop);
+              tile.plant(this.getBestCrop());
               this.wait = 50 * this.stats.plantSpeed;
               break;
             case LandState.READY:
@@ -202,11 +209,11 @@ export class Farmer extends Phaser.GameObjects.Container {
   }
 
   isPlanter(): boolean {
-    return this.farmerType == FarmerType.ALL || this.farmerType == FarmerType.PLANT;
+    return this.farmerType == FarmerType.ALL || this.farmerType == FarmerType.PLANTER;
   }
 
   isHarvester(): boolean {
-    return this.farmerType == FarmerType.ALL || this.farmerType == FarmerType.HARVEST;
+    return this.farmerType == FarmerType.ALL || this.farmerType == FarmerType.HARVESTER;
   }
 
   canInteract(type: LandState): boolean {

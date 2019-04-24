@@ -48,8 +48,7 @@ export class Farm extends Phaser.GameObjects.GameObject {
 
     scene.events.addListener('tileUpdate', (tile: Land) => this.tileUpdated(tile));
     scene.events.on('hover', tile => { this.hover.alpha = 0.2; this.hover.setPosition(tile.sprite.x, tile.sprite.y); });
-    scene.events.on('hoverFarmer', () => this.hover.alpha = 0);
-    scene.events.on('cameraMove', () => this.hover.alpha = 0);
+    scene.game.events.on('clearHover', () => this.hover.alpha = 0);
   }
 
   tileUpdated(tile: Land) {

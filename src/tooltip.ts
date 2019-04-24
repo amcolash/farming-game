@@ -22,8 +22,8 @@ export class Tooltip extends Phaser.GameObjects.Container {
     this.info.add(this.text);
 
     scene.events.on('hover', tile => this.showTooltip(tile));
-    scene.events.on('cameraMove', this.hideTooltip.bind(this));
     scene.events.on('hoverFarmer', this.hideTooltip.bind(this));
+    scene.game.events.on('clearHover', this.hideTooltip.bind(this));
   }
 
   update() {

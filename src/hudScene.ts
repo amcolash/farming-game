@@ -3,6 +3,7 @@ import { TextButton } from './textButton';
 import { Farm } from './farm';
 import { FarmScene } from './farmScene';
 import { Util } from './util';
+import { FarmerType, Farmer } from './farmer';
 
 export class HUDScene extends Phaser.Scene {
   registry: Phaser.Data.DataManager;
@@ -21,6 +22,10 @@ export class HUDScene extends Phaser.Scene {
   stats: Phaser.GameObjects.Container;
   bars: Phaser.GameObjects.Rectangle[];
   
+  farmScene: FarmScene;
+  farmers: Phaser.GameObjects.Container;
+  farmerList: Phaser.GameObjects.Container;
+
   constructor() {
     super('HUDScene');
   }
@@ -76,6 +81,20 @@ export class HUDScene extends Phaser.Scene {
       this.bars.push(bar);
       this.stats.add(bar);
     }
+
+    this.farmScene = (this.game.scene.getScene('FarmScene') as FarmScene);
+    this.farmers = this.add.container(width - 175, 0);
+    this.farmerList = this.add.container(0, 0);
+
+    const rectangle = new Phaser.GameObjects.Rectangle(this, 0, 0, 175, height - 100, 0x000000, 0.5).setOrigin(0);
+    rectangle.setInteractive();
+    rectangle.on('pointerover', () => this.game.events.emit('clearHover'));
+
+    this.farmers.add(rectangle);
+    this.farmers.add(this.farmerList);
+    this.getFarmers();
+
+    this.game.events.on('farmerUpdate', this.getFarmers.bind(this));
   }
 
   update(time: number, delta: number): void {
@@ -86,6 +105,7 @@ export class HUDScene extends Phaser.Scene {
     this.value.setText('Farm Value: $' + Util.numberWithCommas(this.getFarmValue()));
 
     this.stats.visible = !this.isShop;
+    this.farmerList.visible = !this.isShop;
     
     if (this.stats.visible) {
       const stats = this.registry.get('stats');
@@ -94,6 +114,26 @@ export class HUDScene extends Phaser.Scene {
         if (total === 0) this.bars[i].height = 2;
         else this.bars[i].height = 2 + 47 * (stats[i] / total);
       }
+    }
+  }
+
+  getFarmers(): void {
+    const farmers = this.farmScene.farmers;
+    this.farmerList.removeAll();
+    for (var i = 0; i < farmers.length; i++) {
+      const farmer = farmers[i];
+      const sprite = new Phaser.GameObjects.Sprite(this, 10, 10 + i * 60, Farmer.getSprite(farmer.farmerType), 0).setOrigin(0);
+      const text = new Phaser.GameObjects.Text(this, 46, 10 + i * 60, farmer.stats.name + '\n(' + Util.titleCase(FarmerType[farmer.farmerType]) + ')', { fontSize: 18 }).setOrigin(0);
+      this.farmerList.add(sprite);
+      this.farmerList.add(text);
+
+      sprite.setInteractive({ useHandCursor: true })
+        .on('pointerover', () => this.game.events.emit('hoverFarmer', farmer))
+        .on('pointerout', () => this.game.events.emit('hoverFarmer', null));
+
+      text.setInteractive({ useHandCursor: true })
+        .on('pointerover', () => this.game.events.emit('hoverFarmer', farmer))
+        .on('pointerout', () => this.game.events.emit('hoverFarmer', null));
     }
   }
 
