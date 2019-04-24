@@ -39,7 +39,8 @@ export class HUDScene extends Phaser.Scene {
 
     this.registry = this.game.registry;
 
-    this.add.rectangle(0, this.height - 100, this.width, 100, 0x000000).setInteractive({ cursor: 'default' }).setOrigin(0, 0);
+    const hudRectangle = this.add.rectangle(0, this.height - 100, this.width, 100, 0x000000).setOrigin(0, 0);
+    hudRectangle.setInteractive({ cursor: 'default' }).on('pointerover', () => this.game.events.emit('clearHover'));
     this.add.rectangle(0, this.height - 102, this.width, 2, 0x777777).setOrigin(0, 0);
 
     this.button = new TextButton(this, 20, this.height - 28, this.isShop ? 'Back' : 'Shop', () => this.toggleShop());
@@ -48,10 +49,11 @@ export class HUDScene extends Phaser.Scene {
     this.crop = this.add.sprite(this.width / 2 - 8, this.height - 35, 'crops', Crops[this.registry.get('currentCrop')].frame);
     this.crop.setScale(1.5);
     
-    new TextButton(this, this.width / 2 - 32, this.height - 100, "<", () => this.game.events.emit('speed', -1));
-    new TextButton(this, this.width / 2 - 4, this.height - 100, ">", () => this.game.events.emit('speed', 1));
-    new TextButton(this, this.width / 2 - 32, this.height - 80, "-", () => this.game.events.emit('zoom', -1));
-    new TextButton(this, this.width / 2 - 4, this.height - 80, "+", () => this.game.events.emit('zoom', 1));
+    new TextButton(this, this.width / 2 - 46, this.height - 95, "⏪", () => this.game.events.emit('speed', -1));
+    new TextButton(this, this.width / 2 - 18, this.height - 95, "⏯", () => this.game.events.emit('speed', 0));
+    new TextButton(this, this.width / 2 + 6, this.height - 95, "⏩", () => this.game.events.emit('speed', 1));
+    new TextButton(this, this.width / 2 - 32, this.height - 70, "-", () => this.game.events.emit('zoom', -1));
+    new TextButton(this, this.width / 2 - 4, this.height - 70, "+", () => this.game.events.emit('zoom', 1));
     
     this.money = this.add.text(this.width - 20, this.height - 28, '$0', { fontSize: 24 });
     this.money.setOrigin(1, 0);
@@ -65,7 +67,9 @@ export class HUDScene extends Phaser.Scene {
     this.game.events.addListener('speedValue', value => this.speed.setText('Speed: ' + value));
 
     this.stats = this.add.container(20, this.height - 125);
-    this.stats.add(new Phaser.GameObjects.Rectangle(this, -20, 23, 200, 115, 0x000000, 0.35).setOrigin(0, 1));
+    const statsBackground = new Phaser.GameObjects.Rectangle(this, -20, 23, 200, 115, 0x000000, 0.35).setOrigin(0, 1);
+    statsBackground.setInteractive().on('pointerover', () => this.game.events.emit('clearHover'));
+    this.stats.add(statsBackground);
     
     this.value = this.add.text(20, this.height - 50, 'Farm Value: $0');
 

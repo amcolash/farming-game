@@ -4,6 +4,7 @@ import { Farmer, FarmerType } from './farmer';
 import { Tooltip } from './tooltip';
 
 export class FarmScene extends Phaser.Scene {
+  paused: boolean = false;
   camera: Camera;
   farm: Farm;
 
@@ -22,8 +23,8 @@ export class FarmScene extends Phaser.Scene {
     // TODO: Figure out dancing and fighting farmers
     // this.physics.add.collider(this.farmer, farmer1);
     this.farmers.push(new Farmer(this, 0, 0, this.farm, FarmerType.ALL));
-    this.farmers.push(new Farmer(this, 32, 0, this.farm, FarmerType.PLANTER));
-    this.farmers.push(new Farmer(this, 64, 0, this.farm, FarmerType.HARVESTER));
+    // this.farmers.push(new Farmer(this, 32, 0, this.farm, FarmerType.PLANTER));
+    // this.farmers.push(new Farmer(this, 64, 0, this.farm, FarmerType.HARVESTER));
     
     this.tooltip = new Tooltip(this);
 
@@ -32,8 +33,14 @@ export class FarmScene extends Phaser.Scene {
     // this.physics.world.timeScale = 1 / 5;
 
     this.game.events.on('speed', value => {
-      const raw = Phaser.Math.Clamp((1 / this.physics.world.timeScale) + value, 1, 25);
-      this.physics.world.timeScale = 1 / raw;
+      let raw = value;
+      if (value == 0) {
+        this.paused = !this.paused;
+        if (!this.paused) raw = 1 / this.physics.world.timeScale;
+      } else {
+        raw = Phaser.Math.Clamp((1 / this.physics.world.timeScale) + value, 1, 25);
+        this.physics.world.timeScale = 1 / raw;
+      }
 
       // Let HUD know final value
       this.game.events.emit('speedValue', raw.toFixed(0));
@@ -41,6 +48,8 @@ export class FarmScene extends Phaser.Scene {
   }
 
   update(time: number, delta: number): void {
+    if (this.paused) delta = 0;
+
     this.game.registry.set('life', this.game.registry.get('life') + delta * (1 / this.physics.world.timeScale));
 
     this.camera.update();
