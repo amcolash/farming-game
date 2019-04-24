@@ -13,19 +13,17 @@ export class Tooltip extends Phaser.GameObjects.Container {
     scene.add.existing(this);
     this.alpha = 0;
 
-    this.hover = new Phaser.GameObjects.Rectangle(scene, 0, 0, 32, 32, 0x00ddbb).setAlpha(0.2);
-    this.add(this.hover);
-
-    this.info = new Phaser.GameObjects.Container(scene, -16, -32);
+    this.info = new Phaser.GameObjects.Container(this.scene, -16, -32);
     this.add(this.info);
 
-    this.text = new Phaser.GameObjects.Text(scene, 0, 12, '', { fontSize: 12 }).setOrigin(0, 1);
+    this.text = new Phaser.GameObjects.Text(this.scene, 0, 12, '', { fontSize: 12 }).setOrigin(0, 1);
     this.text.setBackgroundColor('rgba(0,0,0,0.5)');
     this.text.setPadding(4, 6, 4, 6);
     this.info.add(this.text);
 
     scene.events.on('hover', tile => this.showTooltip(tile));
     scene.events.on('cameraMove', this.hideTooltip.bind(this));
+    scene.events.on('hoverFarmer', this.hideTooltip.bind(this));
   }
 
   update() {

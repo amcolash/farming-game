@@ -123,6 +123,7 @@ export class Land extends Phaser.GameObjects.GameObject {
   clear(): void {
     this.crop = null;
     this.land = LandState.EMPTY;
+    this.bar.alpha = 0;
     this.updateTile();
   }
 

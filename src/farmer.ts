@@ -105,7 +105,11 @@ export class Farmer extends Phaser.GameObjects.Container {
     this.world = scene.physics.world;
 
     this.add(new Phaser.GameObjects.Arc(scene, 0, 12, 4, 0, 360, false, type == FarmerType.ALL ? 0xff0000 : (type == FarmerType.HARVEST ? 0x00ff00 : 0x0000ff)));
-    this.add(new Phaser.GameObjects.Sprite(scene, 0, 0, Farmer.getSprite(type), 0));
+
+    const sprite = new Phaser.GameObjects.Sprite(scene, 0, 0, Farmer.getSprite(type), 0);
+    sprite.setInteractive({ useHandCursor: true });
+    sprite.on('pointerover', () => scene.events.emit('hoverFarmer'));
+    this.add(sprite);
 
     if (this.isPlanter()) {
       this.bestCrop = this.getBestCrop();
@@ -284,7 +288,7 @@ export class Farmer extends Phaser.GameObjects.Container {
         break;
     }
 
-    var score = 9999999999;
+    var score = Number.MAX_SAFE_INTEGER;
     var best = null;
 
     if (arr) {

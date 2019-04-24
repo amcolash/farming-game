@@ -19,19 +19,17 @@ export class FarmScene extends Phaser.Scene {
     this.farm = new Farm(this);
     this.camera = new Camera(this, 0, 0);
     
+    // TODO: Figure out dancing and fighting farmers
+    // this.physics.add.collider(this.farmer, farmer1);
     // this.farmers.push(new Farmer(this, 0, 0, this.farm, FarmerType.ALL));
-    this.farmers.push(new Farmer(this, 32, 0, this.farm, FarmerType.PLANT));
+    // this.farmers.push(new Farmer(this, 32, 0, this.farm, FarmerType.PLANT));
     this.farmers.push(new Farmer(this, 64, 0, this.farm, FarmerType.HARVEST));
-
+    
     this.tooltip = new Tooltip(this);
 
-    // TODO: Figure out dancing and fighting farmers
-    // const farmer1 = new Farmer(this, 350, 350, this.farm);
-    // this.physics.add.collider(this.farmer, farmer1);
-
     // There is an issue with this, see: https://github.com/photonstorm/phaser/issues/4405
-    this.input.setPollAlways();
-    this.physics.world.timeScale = 1 / 5;
+    // this.input.setPollAlways();
+    // this.physics.world.timeScale = 1 / 5;
 
     this.game.events.on('speed', value => {
       const raw = Phaser.Math.Clamp((1 / this.physics.world.timeScale) + value, 1, 25);

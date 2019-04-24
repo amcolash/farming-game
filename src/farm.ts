@@ -12,6 +12,8 @@ export class Farm extends Phaser.GameObjects.GameObject {
   planted: Phaser.Structs.Set<Land>;
   ready: Phaser.Structs.Set<Land>;
 
+  hover: Phaser.GameObjects.Rectangle;
+
   constructor(scene: Phaser.Scene) {
     super(scene, 'farm');
 
@@ -41,8 +43,13 @@ export class Farm extends Phaser.GameObjects.GameObject {
       }
     }
 
+    this.hover = scene.add.rectangle(0, 0, 32, 32, 0x00ddbb).setAlpha(0);
     scene.add.grid(-this.tileSize / 2, -this.tileSize / 2, width, height, this.tileSize, this.tileSize, 0x000000, 0, 0xffffff, 0.1);
+
     scene.events.addListener('tileUpdate', (tile: Land) => this.tileUpdated(tile));
+    scene.events.on('hover', tile => { this.hover.alpha = 0.2; this.hover.setPosition(tile.sprite.x, tile.sprite.y); });
+    scene.events.on('hoverFarmer', () => this.hover.alpha = 0);
+    scene.events.on('cameraMove', () => this.hover.alpha = 0);
   }
 
   tileUpdated(tile: Land) {
