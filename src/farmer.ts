@@ -120,6 +120,11 @@ export class Farmer extends Phaser.GameObjects.Container {
       }
     });
 
+    // When the game is paused, stop the famers too
+    scene.game.events.on('speed', value => {
+      if (value === 0) (this.body as Phaser.Physics.Arcade.Body).setVelocity(0);
+    });
+
     if (this.isPlanter()) {
       this.cropImage = new Phaser.GameObjects.Sprite(scene, 0, -32, 'crops', this.getBestCrop().frame);
       this.add(this.cropImage);

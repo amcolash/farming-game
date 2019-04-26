@@ -30,7 +30,7 @@ export class FarmScene extends Phaser.Scene {
 
     // There is an issue with this, see: https://github.com/photonstorm/phaser/issues/4405
     // this.input.setPollAlways();
-    // this.physics.world.timeScale = 1 / 5;
+    this.physics.world.timeScale = 1 / 5;
 
     this.game.events.on('speed', value => {
       let raw = value;
@@ -55,8 +55,11 @@ export class FarmScene extends Phaser.Scene {
     this.camera.update();
     this.tooltip.update();
     
-    this.farm.update(time, delta);
-    this.farmers.forEach(farmer => farmer.update(time, delta));
+    // Actual game objects go inside
+    if (delta > 0) {
+      this.farm.update(time, delta);
+      this.farmers.forEach(farmer => farmer.update(time, delta));
+    }
 
     this.frustumCull();
   }
