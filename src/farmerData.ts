@@ -1,6 +1,13 @@
 import { Names } from "./names";
 import { Farmer } from "./farmer";
 
+export class FarmerBaseStats {
+  static readonly PlowSpeed: number = 600;
+  static readonly PlantSpeed: number = 300;
+  static readonly HarvestSpeed: number = 450;
+  static readonly MovementSpeed: number = 60;
+}
+
 export enum FarmerType {
   ALL,
   PLANTER,

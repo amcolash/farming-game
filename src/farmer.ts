@@ -1,7 +1,7 @@
 import { Crop, Crops } from './crops';
 import { Farm } from './farm';
 import { Land, LandState } from './land';
-import { FarmerType, FarmerStats } from './farmerData';
+import { FarmerType, FarmerStats, FarmerBaseStats } from './farmerData';
 
 export class Farmer extends Phaser.GameObjects.Container {
   readonly baseMoney: number = 200;
@@ -83,22 +83,22 @@ export class Farmer extends Phaser.GameObjects.Container {
           switch(tile.land) {
             case LandState.EMPTY:
               tile.plow();
-              this.wait = 125 * this.stats.plowSpeed;
+              this.wait = FarmerBaseStats.PlowSpeed * this.stats.plowSpeed;
               break;
             case LandState.PLOWED:
               const best = this.getBestCrop();
               tile.plant(best);
               this.cropImage.setFrame(best.frame);
-              this.wait = 50 * this.stats.plantSpeed;
+              this.wait = FarmerBaseStats.PlantSpeed * this.stats.plantSpeed;
               break;
             case LandState.READY:
               tile.harvest();
-              this.wait = 100 * this.stats.harvestSpeed;
+              this.wait = FarmerBaseStats.HarvestSpeed * this.stats.harvestSpeed;
               break;
           }
         }
       } else {
-        this.scene.physics.moveTo(this, tile.sprite.x, tile.sprite.y, 60 * this.stats.movementSpeed);
+        this.scene.physics.moveTo(this, tile.sprite.x, tile.sprite.y, FarmerBaseStats.MovementSpeed * this.stats.movementSpeed);
       }
     }
   }
