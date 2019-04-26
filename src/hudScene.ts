@@ -1,9 +1,9 @@
 import { Crops } from './crops';
 import { TextButton } from './textButton';
-import { Farm } from './farm';
 import { FarmScene } from './farmScene';
 import { Util } from './util';
-import { FarmerType, Farmer } from './farmer';
+import { Farmer } from './farmer';
+import { FarmerType } from './farmerData';
 
 export class HUDScene extends Phaser.Scene {
   isShop: boolean = false;

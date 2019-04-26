@@ -1,9 +1,10 @@
 import { Crops } from './crops';
 import { HUDScene } from './hudScene';
 import { TextButton } from './textButton';
-import { FarmerType, Farmer, Farmers } from './farmer';
+import { Farmer } from './farmer';
 import { FarmScene } from './farmScene';
 import { Util } from './util';
+import { Farmers, FarmerType } from './farmerData';
 
 export class Shop extends Phaser.GameObjects.GameObject {
   crops: Phaser.GameObjects.Container;

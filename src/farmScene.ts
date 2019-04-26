@@ -1,7 +1,8 @@
 import { Camera } from './camera';
 import { Farm } from './farm';
-import { Farmer, FarmerType } from './farmer';
+import { Farmer } from './farmer';
 import { Tooltip } from './tooltip';
+import { FarmerType } from './farmerData';
 
 export class FarmScene extends Phaser.Scene {
   paused: boolean = false;
