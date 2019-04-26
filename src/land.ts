@@ -43,7 +43,7 @@ export class Land extends Phaser.GameObjects.GameObject {
     this.sprite.on('pointerdown', this.handleClick.bind(this));
     this.sprite.on('pointerover', () => scene.events.emit('hover', this));
 
-    if (x === 0 && y === 0) scene.add.rectangle(x, y, 32, 32).setStrokeStyle(1, 0xff0000, 0.75);
+    // if (x === 0 && y === 0) scene.add.rectangle(x, y, 32, 32).setStrokeStyle(1, 0xff0000, 0.75);
     this.bar = scene.add.rectangle(x - 16, y - 16, 0, 2, 0x00ee00);
   }
 

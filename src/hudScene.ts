@@ -15,7 +15,7 @@ export class HUDScene extends Phaser.Scene {
 
   button: TextButton;
   crop: Phaser.GameObjects.Sprite;
-  life: Phaser.GameObjects.Text;
+  gameTime: Phaser.GameObjects.Text;
   money: Phaser.GameObjects.Text;
   planted: Phaser.GameObjects.Text;
   profit: Phaser.GameObjects.Text;
@@ -44,7 +44,7 @@ export class HUDScene extends Phaser.Scene {
     this.add.rectangle(0, this.height - 102, this.width, 2, 0x777777).setOrigin(0, 0);
 
     this.button = new TextButton(this, 20, this.height - 28, this.isShop ? 'Back' : 'Shop', () => this.toggleShop());
-    this.life = this.add.text(20, this.height - 90, 'Life: 0');
+    this.gameTime = this.add.text(20, this.height - 90, '');
     this.profit = this.add.text(20, this.height - 70, 'Profit: $0');
     this.crop = this.add.sprite(this.width / 2 - 8, this.height - 35, 'crops', Crops[this.registry.get('currentCrop')].frame);
     this.crop.setScale(1.5);
@@ -112,7 +112,7 @@ export class HUDScene extends Phaser.Scene {
 
   update(time: number, delta: number): void {
     this.crop.setFrame(Crops[this.registry.get('currentCrop')].frame);
-    this.life.setText('Life: ' + Util.getTime(this.registry.get('life')));
+    this.gameTime.setText(Util.getDate(this.registry.get('gameTime')));
     this.money.setText('$' + Util.numberWithCommas(this.registry.get('money')));
     this.profit.setText('Profit: $' + Util.numberWithCommas(this.registry.get('profit')));
     this.value.setText('Farm Value: $' + Util.numberWithCommas(this.getFarmValue()));

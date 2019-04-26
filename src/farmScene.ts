@@ -3,14 +3,13 @@ import { Farm } from './farm';
 import { Farmer } from './farmer';
 import { Tooltip } from './tooltip';
 import { FarmerType } from './farmerData';
+import { DayNight } from './daynight';
 
 export class FarmScene extends Phaser.Scene {
   paused: boolean = false;
   camera: Camera;
   farm: Farm;
-
   farmers: Farmer[] = [];
-
   tooltip: Tooltip;
 
   constructor() {
@@ -19,8 +18,6 @@ export class FarmScene extends Phaser.Scene {
   
   create(): void {
     this.farm = new Farm(this);
-    this.camera = new Camera(this, 0, 0);
-    
     // TODO: Figure out dancing and fighting farmers
     // this.physics.add.collider(this.farmer, farmer1);
     this.farmers.push(new Farmer(this, 0, 0, this.farm, FarmerType.ALL));
@@ -28,7 +25,8 @@ export class FarmScene extends Phaser.Scene {
     // this.farmers.push(new Farmer(this, 64, 0, this.farm, FarmerType.HARVESTER));
     
     this.tooltip = new Tooltip(this);
-
+    this.camera = new Camera(this, 0, 0);
+    
     // There is an issue with this, see: https://github.com/photonstorm/phaser/issues/4405
     // this.input.setPollAlways();
     this.physics.world.timeScale = 1 / 5;
@@ -51,7 +49,7 @@ export class FarmScene extends Phaser.Scene {
   update(time: number, delta: number): void {
     if (this.paused) delta = 0;
 
-    this.game.registry.set('life', this.game.registry.get('life') + delta * (1 / this.physics.world.timeScale));
+    this.game.registry.set('gameTime', this.game.registry.get('gameTime') + delta * (1 / this.physics.world.timeScale) * 500);
 
     this.camera.update();
     this.tooltip.update();

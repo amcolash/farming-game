@@ -1,3 +1,5 @@
+import * as moment from 'moment';
+
 export class Util {
   static getTime(ms: number): string {
     const sec = ms / 1000;
@@ -9,6 +11,10 @@ export class Util {
     if (min < 60) return min.toFixed(0) + 'm';
     if (hour < 60) return hour.toFixed(1) + 'h';
     return day.toFixed(1) + 'd';
+  }
+
+  static getDate(ms: number): string {
+    return moment(ms).utc().format('MMM D, h:mmA');
   }
 
   static numberWithCommas(x: number): string {

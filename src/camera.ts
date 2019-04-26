@@ -1,8 +1,12 @@
+import { DayNight } from "./daynight";
+
 export class Camera extends Phaser.Physics.Arcade.Image {
   camera: Phaser.Cameras.Scene2D.Camera;
   cursors: Phaser.Input.Keyboard.CursorKeys;
   readonly speed: number = 300;
   world: Phaser.Physics.Arcade.World;
+
+  daynight: DayNight;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'crops', 1);
@@ -20,9 +24,14 @@ export class Camera extends Phaser.Physics.Arcade.Image {
     scene.game.events.addListener('zoom', (zoom) => {
       this.camera.setZoom(Phaser.Math.Clamp(this.camera.zoom + zoom * 0.2, 0.7, 3));
     });
+
+    const width = Number.parseInt(scene.game.config.width.toString());
+    const height = Number.parseInt(scene.game.config.height.toString());
+    this.daynight = new DayNight(scene, 0, 0, width, height);
   }
 
   update() {
+    this.daynight.update(this.x, this.y);
     this.setVelocity(0);
     
     const up = this.cursors.up.isDown;
@@ -32,10 +41,10 @@ export class Camera extends Phaser.Physics.Arcade.Image {
     
     if (up && !down) this.setVelocityY(-this.speed * this.world.timeScale);
     if (!up && down) this.setVelocityY(this.speed * this.world.timeScale);
-
+    
     if (left && !right) this.setVelocityX(-this.speed * this.world.timeScale);
     if (!left && right) this.setVelocityX(this.speed * this.world.timeScale);
-
+    
     if (up || down || left || right) this.scene.game.events.emit('clearHover');
   }
 }
