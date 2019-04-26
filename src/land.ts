@@ -8,13 +8,20 @@ export enum LandState {
 }
 
 export class Land extends Phaser.GameObjects.GameObject {
+  // global id counter such that each tile has a unique id
+  static idCounter: number = 0;
+
+  // the number of unique update groups
+  static readonly updateGroups: number = 4;
+
   registry: Phaser.Data.DataManager;
   world: Phaser.Physics.Arcade.World;
 
   sprite: Phaser.GameObjects.Sprite;
-  id: string;
   bar: Phaser.GameObjects.Rectangle;
-
+  
+  id: string;
+  updateCycle: number;
   land: LandState;
   life: number;
   crop: Crop;
@@ -29,6 +36,7 @@ export class Land extends Phaser.GameObjects.GameObject {
     this.crop = null;
     this.land = LandState.EMPTY;
     this.id = x.toString() + y.toString();
+    this.updateCycle = (Land.idCounter++ % Land.updateGroups);
 
     this.sprite = scene.add.sprite(x, y, 'crops', 19);
     this.sprite.setInteractive({ useHandCursor: true });
@@ -40,6 +48,11 @@ export class Land extends Phaser.GameObjects.GameObject {
   }
 
   update(time: number, delta: number) {
+    this.updateCycle = (this.updateCycle + 1) % Land.updateGroups;
+    if (this.updateCycle !== 0) return;
+
+    delta *= Land.updateGroups;
+
     if (this.crop != null) {
       this.life -= (delta / 1000) * (1 / this.world.timeScale);
       if (this.life < -this.crop.timeToDeath) {
@@ -123,6 +136,7 @@ export class Land extends Phaser.GameObjects.GameObject {
   clear(): void {
     this.crop = null;
     this.land = LandState.EMPTY;
+    this.bar.width = 0;
     this.bar.alpha = 0;
     this.updateTile();
   }
@@ -156,6 +170,7 @@ export class Land extends Phaser.GameObjects.GameObject {
     this.registry.values.stats[this.crop.frame]++;
     this.crop = null;
     this.land = LandState.EMPTY;
+    this.bar.width = 0;
     this.bar.alpha = 0;
     this.updateTile();
   }
