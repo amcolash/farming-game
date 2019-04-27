@@ -190,7 +190,7 @@ export class Farmer extends Phaser.GameObjects.Container {
           }
         } else {
           const planted = this.getClosestTile(LandState.PLANTED);
-          const score1 = this.getScore(best) * 1.5;
+          const score1 = this.getScore(best) * 1.25;
           const score2 = this.getScore(planted);
 
           if (score2 < score1) best = planted;
