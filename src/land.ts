@@ -165,7 +165,9 @@ export class Land extends Phaser.GameObjects.GameObject {
 
   harvest(): void {
     const money = this.registry.get('money');
-    this.registry.set('money', money + this.crop.revenue);
+    // You can get up to 115% of a crop value if harvested immediately, at a minimum you get 75% of value as it dies
+    const revenue = Math.floor(this.crop.revenue * 0.75 + this.crop.revenue * (1 - (-this.life / this.crop.timeToDeath)) * 0.4);
+    this.registry.set('money', money + revenue);
     this.registry.set('profit', this.registry.get('profit') + this.crop.revenue - this.crop.cost - 5);
     this.registry.values.stats[this.crop.frame]++;
     this.crop = null;
