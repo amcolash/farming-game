@@ -4,6 +4,7 @@ import { Land, LandState } from './land';
 import { FarmerType, FarmerStats, FarmerBaseStats } from './farmerData';
 
 export class Farmer extends Phaser.GameObjects.Container {
+  static ringTexture: Phaser.Textures.CanvasTexture;
   readonly baseMoney: number = 200;
 
   cropImage: Phaser.GameObjects.Image;
@@ -17,6 +18,13 @@ export class Farmer extends Phaser.GameObjects.Container {
 
   constructor(scene: Phaser.Scene, x: number, y: number, farm: Farm, type: FarmerType) {
     super(scene, x, y);
+
+    // On init of class, generate the ring texture
+    if (!Farmer.ringTexture) {
+      this.generateTexture();
+    }
+    scene.add.image(x, y, 'gradient').setScale(2, 2).setAlpha(0.6).setBlendMode(Phaser.BlendModes.OVERLAY);
+
     scene.add.existing(this);
     scene.physics.add.existing(this);
     
@@ -27,7 +35,7 @@ export class Farmer extends Phaser.GameObjects.Container {
     this.registry = scene.game.registry;
     this.world = scene.physics.world;
 
-    this.add(new Phaser.GameObjects.Arc(scene, 0, 12, 4, 0, 360, false, type == FarmerType.ALL ? 0xff0000 : (type == FarmerType.HARVESTER ? 0x00ff00 : 0x0000ff)));
+    // this.add(new Phaser.GameObjects.Arc(scene, 0, 12, 4, 0, 360, false, type == FarmerType.ALL ? 0xff0000 : (type == FarmerType.HARVESTER ? 0x00ff00 : 0x0000ff)));
 
     const sprite = new Phaser.GameObjects.Sprite(scene, 0, 0, Farmer.getSprite(type), 0);
     this.add(sprite);
@@ -247,5 +255,19 @@ export class Farmer extends Phaser.GameObjects.Container {
 
     // Add random to try and prevent duplicate scores
     return score + Math.random();
+  }
+
+  generateTexture(): void {
+    Farmer.ringTexture = this.scene.textures.createCanvas('gradient', 256, 256);
+    const context = Farmer.ringTexture.getContext();
+    context.filter = 'blur(2px)';
+    context.beginPath();
+    context.arc(128, 128, 90, 0, 2 * Math.PI, false);
+    context.lineWidth = 3;
+    context.strokeStyle = '#009900';
+    context.stroke();
+
+    //  Call this if running under WebGL, or you'll see nothing change
+    Farmer.ringTexture.refresh();
   }
 }
