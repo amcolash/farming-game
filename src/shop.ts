@@ -53,6 +53,7 @@ export class Shop extends Phaser.GameObjects.GameObject {
     this.cropsButton.setSelected(false);
     this.farmersButton.setSelected(true);
 
+    this.generateFarmers();
     this.crops.setAlpha(0);
     this.farmers.setAlpha(1);
   }
@@ -78,6 +79,7 @@ export class Shop extends Phaser.GameObjects.GameObject {
   }
 
   generateFarmers(): void {
+    this.farmers.removeAll();
     const money = this.scene.game.registry.get('money');
 
     for (var i = 0; i < Farmers.length; i++) {
