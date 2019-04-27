@@ -37,7 +37,7 @@ export class FarmScene extends Phaser.Scene {
         this.paused = !this.paused;
         if (!this.paused) raw = 1 / this.physics.world.timeScale;
       } else {
-        raw = Phaser.Math.Clamp((1 / this.physics.world.timeScale) + value, 1, 25);
+        raw = Phaser.Math.Clamp((1 / this.physics.world.timeScale) + value, 1, 20);
         this.physics.world.timeScale = 1 / raw;
       }
 
