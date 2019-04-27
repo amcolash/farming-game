@@ -4,6 +4,7 @@ import { FarmScene } from './farmScene';
 import { Util } from './util';
 import { Farmer } from './farmer';
 import { FarmerType } from './farmerData';
+import { CursorMode } from './farm';
 
 export class HUDScene extends Phaser.Scene {
   isShop: boolean = false;
@@ -144,6 +145,7 @@ export class HUDScene extends Phaser.Scene {
   toggleFarmers(): void {
     if (this.farmListTarget === this.width) {
       this.farmListTarget = this.width - 175;
+      this.statListTarget = -200;
     } else {
       this.farmListTarget = this.width;
     }
@@ -154,6 +156,7 @@ export class HUDScene extends Phaser.Scene {
       this.statListTarget = -200;
     } else {
       this.statListTarget = 0;
+      this.farmListTarget = this.width;
     }
   }
 
@@ -169,12 +172,23 @@ export class HUDScene extends Phaser.Scene {
 
       sprite.setInteractive({ useHandCursor: true })
         .on('pointerover', () => this.game.events.emit('hoverFarmer', farmer))
-        .on('pointerout', () => this.game.events.emit('hoverFarmer', null));
+        .on('pointerout', () => {
+          if (this.farmScene.farm.cursorMode != CursorMode.FARMER) this.game.events.emit('hoverFarmer', null);
+        })
+        .on('pointerdown', this.selectFarmer.bind(this, farmer));
 
       text.setInteractive({ useHandCursor: true })
         .on('pointerover', () => this.game.events.emit('hoverFarmer', farmer))
-        .on('pointerout', () => this.game.events.emit('hoverFarmer', null));
+        .on('pointerout', () => {
+          if (this.farmScene.farm.cursorMode != CursorMode.FARMER) this.game.events.emit('hoverFarmer', null);
+        })
+        .on('pointerdown', this.selectFarmer.bind(this, farmer));
     }
+  }
+
+  selectFarmer(farmer: Farmer): void {
+    this.toggleFarmers();
+    this.farmScene.farm.setCursorMode(CursorMode.FARMER, farmer);
   }
 
   getFarmValue(): number {

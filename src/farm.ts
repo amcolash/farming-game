@@ -1,4 +1,10 @@
 import { Land, LandState } from './land';
+import { Farmer } from './farmer';
+
+export enum CursorMode {
+  CROP,
+  FARMER
+}
 
 export class Farm extends Phaser.GameObjects.GameObject {
   readonly dimensionX: number = 10;
@@ -12,7 +18,10 @@ export class Farm extends Phaser.GameObjects.GameObject {
   planted: Phaser.Structs.Set<Land>;
   ready: Phaser.Structs.Set<Land>;
 
+  cursorMode: CursorMode = CursorMode.CROP;
   hover: Phaser.GameObjects.Rectangle;
+  glass: Phaser.GameObjects.Rectangle;
+  selectedFarmer: Farmer;
 
   constructor(scene: Phaser.Scene) {
     super(scene, 'farm');
@@ -44,6 +53,10 @@ export class Farm extends Phaser.GameObjects.GameObject {
     }
 
     this.hover = scene.add.rectangle(0, 0, 32, 32, 0x00ddbb).setAlpha(0);
+    this.glass = scene.add.rectangle(xPos, yPos, width, height).setOrigin(0).setInteractive({ cursor: 'crosshair' });
+    this.glass.input.enabled = false;
+    this.glass.on('pointerdown', this.glassDown.bind(this));
+
     scene.add.grid(-this.tileSize / 2, -this.tileSize / 2, width, height, this.tileSize, this.tileSize, 0x000000, 0, 0xffffff, 0.1);
 
     scene.events.addListener('tileUpdate', (tile: Land) => this.tileUpdated(tile));
@@ -79,5 +92,32 @@ export class Farm extends Phaser.GameObjects.GameObject {
     this.plowed.entries.forEach(t => t.update(time, delta));
     this.planted.entries.forEach(t => t.update(time, delta));
     this.ready.entries.forEach(t => t.update(time, delta));
+  }
+
+  glassDown(event) {
+    const x = Math.floor(event.worldX / this.tileSize) * this.tileSize;
+    const y = Math.floor(event.worldY / this.tileSize) * this.tileSize;
+    this.selectedFarmer.updateSpawnLocation(x, y);
+    this.glass.input.enabled = false;
+    this.setCursorMode(CursorMode.CROP);
+    this.scene.game.events.emit('speed', 0);
+    this.scene.game.events.emit('hoverFarmer', null);
+  }
+
+  setCursorMode(mode: CursorMode, selected?: Farmer) {
+    this.cursorMode = mode;
+    this.hover.alpha = 0;
+
+    switch(mode) {
+      case CursorMode.CROP:
+        this.glass.input.enabled = false;
+        break;
+      case CursorMode.FARMER:
+        this.glass.input.enabled = true;
+        this.selectedFarmer = selected;
+        this.scene.game.events.emit('hoverFarmer', selected);
+        this.scene.game.events.emit('speed', 0);
+        break;
+    }
   }
 }

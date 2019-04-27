@@ -273,4 +273,9 @@ export class Farmer extends Phaser.GameObjects.Container {
     //  Call this if running under WebGL, or you'll see nothing change
     Farmer.ringTexture.refresh();
   }
+
+  updateSpawnLocation(x: number, y: number) {
+    this.spawnLocation.set(x, y);
+    this.ring.setPosition(x, y);
+  }
 }
