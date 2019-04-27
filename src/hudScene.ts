@@ -172,16 +172,12 @@ export class HUDScene extends Phaser.Scene {
 
       sprite.setInteractive({ useHandCursor: true })
         .on('pointerover', () => this.game.events.emit('hoverFarmer', farmer))
-        .on('pointerout', () => {
-          if (this.farmScene.farm.cursorMode != CursorMode.FARMER) this.game.events.emit('hoverFarmer', null);
-        })
+        .on('pointerout', () => { if (this.farmScene.farm.cursorMode != CursorMode.FARMER) this.game.events.emit('hoverFarmer', null); })
         .on('pointerdown', this.selectFarmer.bind(this, farmer));
 
       text.setInteractive({ useHandCursor: true })
         .on('pointerover', () => this.game.events.emit('hoverFarmer', farmer))
-        .on('pointerout', () => {
-          if (this.farmScene.farm.cursorMode != CursorMode.FARMER) this.game.events.emit('hoverFarmer', null);
-        })
+        .on('pointerout', () => { if (this.farmScene.farm.cursorMode != CursorMode.FARMER) this.game.events.emit('hoverFarmer', null); })
         .on('pointerdown', this.selectFarmer.bind(this, farmer));
     }
   }

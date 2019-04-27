@@ -5,6 +5,7 @@ import { Farmer } from './farmer';
 import { FarmScene } from './farmScene';
 import { Util } from './util';
 import { Farmers, FarmerType } from './farmerData';
+import { CursorMode } from './farm';
 
 export class Shop extends Phaser.GameObjects.GameObject {
   crops: Phaser.GameObjects.Container;
@@ -39,6 +40,7 @@ export class Shop extends Phaser.GameObjects.GameObject {
     farmScene.farmers.push(farmer);
     (this.scene.game.scene.getScene('HUDScene') as HUDScene).toggleShop();
     this.scene.game.events.emit('farmerUpdate');
+    farmScene.farm.setCursorMode(CursorMode.FARMER, farmer);
   }
 
   selectCrops(): void {
