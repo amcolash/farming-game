@@ -1,10 +1,9 @@
 import { Land, LandState } from './land';
-import { LEFT } from 'phaser';
 import { Util } from './util';
+import { FarmScene } from './farmScene';
 
 export class Tooltip extends Phaser.GameObjects.Container {
   current: Land;
-  hover: Phaser.GameObjects.Rectangle;
   info: Phaser.GameObjects.Container;
   text: Phaser.GameObjects.Text;
 
@@ -26,20 +25,17 @@ export class Tooltip extends Phaser.GameObjects.Container {
     scene.game.events.on('clearHover', this.hideTooltip.bind(this));
   }
 
-  update() {
-    this.updateTooltip();
-  }
-
   showTooltip(tile: Land) {
-    this.alpha = 1;
     this.current = tile;
-
     this.setPosition(tile.sprite.x, tile.sprite.y);
-    this.updateTooltip();
   }
 
-  updateTooltip() {
-    if (this.current && this.current.land != LandState.EMPTY) {
+  hideTooltip() {
+    this.current = null;
+  }
+
+  update() {
+    if (this.current && this.current.land != LandState.EMPTY ) {
       var t = 'State: ' + LandState[this.current.land];
       if (this.current.crop) {
         t += '\nCrop: ' + this.current.crop.name;
@@ -48,14 +44,9 @@ export class Tooltip extends Phaser.GameObjects.Container {
       }
       this.text.setText(Util.titleCase(t));
       
-      this.info.alpha = 1;
+      this.alpha = 1;
     } else {
-      this.info.alpha = 0;
+      this.alpha = 0;
     }
-  }
-
-  hideTooltip() {
-    this.alpha = 0;
-    this.current = null;
   }
 }
