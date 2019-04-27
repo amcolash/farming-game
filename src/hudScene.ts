@@ -24,6 +24,7 @@ export class HUDScene extends Phaser.Scene {
 
   stats: Phaser.GameObjects.Container;
   bars: Phaser.GameObjects.Rectangle[];
+  statListTarget: number;
   
   farmers: Phaser.GameObjects.Container;
   farmerList: Phaser.GameObjects.Container;
@@ -65,23 +66,30 @@ export class HUDScene extends Phaser.Scene {
     this.speed = this.add.text(this.width - 20, this.height - 70, 'Speed: ' + (1 / this.scene.get('FarmScene').physics.world.timeScale).toFixed(0));
     this.speed.setOrigin(1, 0);
     this.game.events.addListener('speedValue', value => this.speed.setText('Speed: ' + value));
+    this.value = this.add.text(20, this.height - 50, 'Farm Value: $0');
 
-    this.stats = this.add.container(20, this.height - 125);
-    const statsBackground = new Phaser.GameObjects.Rectangle(this, -20, 23, 200, 115, 0x000000, 0.35).setOrigin(0, 1);
+    this.stats = this.add.container(-200, this.height - 124);
+    const statsBackground = new Phaser.GameObjects.Rectangle(this, 0, 22, 200, 115, 0x000000, 0.35).setOrigin(0, 1);
     statsBackground.setInteractive().on('pointerover', () => this.game.events.emit('clearHover'));
     this.stats.add(statsBackground);
     
-    this.value = this.add.text(20, this.height - 50, 'Farm Value: $0');
+    const statsToggle = new Phaser.GameObjects.Rectangle(this, 200, 0, 42, 44, 0x000000, 0.35).setOrigin(0, 0.5);
+    statsToggle.setInteractive({ useHandCursor: true });
+    statsToggle.on('pointerdown', this.toggleStats.bind(this));
+    statsToggle.on('pointerover', () => this.game.events.emit('clearHover'));
+    this.stats.add(statsToggle);
+    this.stats.add(new Phaser.GameObjects.Sprite(this, 204, 1, 'crops', 20).setOrigin(0, 0.5));
+    this.statListTarget = -200;
 
     this.bars = [];
     const sorted = Crops.sort((a, b) => { return a.frame - b.frame });
     for (var i = 0; i < sorted.length; i++) {
       const crop = sorted[i];
       
-      const sprite = new Phaser.GameObjects.Sprite(this, i * 32, 0, 'crops', crop.frame);
+      const sprite = new Phaser.GameObjects.Sprite(this, i * 32 + 20, 0, 'crops', crop.frame);
       this.stats.add(sprite);
 
-      const bar = new Phaser.GameObjects.Rectangle(this, i * 32, -50, 8, 50, 0xcccccc);
+      const bar = new Phaser.GameObjects.Rectangle(this, i * 32 + 20, -50, 8, 50, 0xcccccc);
       bar.setAngle(180);
       this.bars.push(bar);
       this.stats.add(bar);
@@ -92,10 +100,10 @@ export class HUDScene extends Phaser.Scene {
     this.farmerList = this.add.container(0, 0);
     this.farmListTarget = this.width;
 
-    const toggle = new Phaser.GameObjects.Rectangle(this, -42, this.height - 102, 42, 44, 0x000000, 0.5).setOrigin(0, 1);
-    toggle.setInteractive({ useHandCursor: true });
-    toggle.on('pointerdown', this.toggleFarmers.bind(this));
-    toggle.on('pointerover', () => this.game.events.emit('clearHover'));
+    const farmerToggle = new Phaser.GameObjects.Rectangle(this, -42, this.height - 102, 42, 44, 0x000000, 0.5).setOrigin(0, 1);
+    farmerToggle.setInteractive({ useHandCursor: true });
+    farmerToggle.on('pointerdown', this.toggleFarmers.bind(this));
+    farmerToggle.on('pointerover', () => this.game.events.emit('clearHover'));
     
     const rectangle = new Phaser.GameObjects.Rectangle(this, 0, 0, 175, this.height - 102, 0x000000, 0.5).setOrigin(0);
     rectangle.setInteractive();
@@ -103,7 +111,7 @@ export class HUDScene extends Phaser.Scene {
     
     this.farmers.add(rectangle);
     this.farmers.add(this.farmerList);
-    this.farmers.add(toggle);
+    this.farmers.add(farmerToggle);
     this.farmers.add(new Phaser.GameObjects.Sprite(this, -36, this.height - 142, 'farmer_a', 0).setOrigin(0).setAlpha(0.85));
     
     this.getFarmers();
@@ -120,10 +128,10 @@ export class HUDScene extends Phaser.Scene {
     this.stats.visible = !this.isShop;
     this.farmers.visible = !this.isShop;
 
-    if (this.farmListTarget > this.farmers.x) this.farmers.x = Phaser.Math.Clamp(this.farmers.x + delta * 0.7, this.width - 175, this.width);
-    else if (this.farmListTarget < this.farmers.x) this.farmers.x = Phaser.Math.Clamp(this.farmers.x - delta * 0.7, this.width - 175, this.width);
-    
-    if (this.stats.visible) {
+    if (!this.isShop) {
+      this.farmers.x = Util.lerpTowards(this.farmers.x, this.farmListTarget, delta * 0.7);
+      this.stats.x = Util.lerpTowards(this.stats.x, this.statListTarget, delta * 0.7);
+      
       const stats = this.registry.get('stats');
       const total = stats.reduce((a, v) => { return a + v; });
       for (var i = 0; i < Crops.length; i++) {
@@ -138,6 +146,14 @@ export class HUDScene extends Phaser.Scene {
       this.farmListTarget = this.width - 175;
     } else {
       this.farmListTarget = this.width;
+    }
+  }
+
+  toggleStats(): void {
+    if (this.statListTarget === 0) {
+      this.statListTarget = -200;
+    } else {
+      this.statListTarget = 0;
     }
   }
 

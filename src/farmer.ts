@@ -24,7 +24,7 @@ export class Farmer extends Phaser.GameObjects.Container {
     if (!Farmer.ringTexture) {
       this.generateTexture();
     }
-    this.ring = scene.add.image(x, y, 'gradient').setScale(2, 2).setAlpha(0).setBlendMode(Phaser.BlendModes.OVERLAY);
+    this.ring = scene.add.image(x, y, 'gradient').setScale(2).setAlpha(0).setBlendMode(Phaser.BlendModes.OVERLAY);
 
     scene.add.existing(this);
     scene.physics.add.existing(this);

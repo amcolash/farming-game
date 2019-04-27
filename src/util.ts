@@ -26,4 +26,11 @@ export class Util {
       return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
   }
+
+  static lerpTowards(current: number, target: number, delta: number): number {
+      if (Math.abs(target - current) <= delta) {
+          return target;
+      }
+      return current + Math.sign(target - current) * delta;
+  }
 }
