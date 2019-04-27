@@ -1,9 +1,11 @@
+const webpack = require('webpack');
 const merge = require('webpack-merge');
-const path = require('path');
 const base = require('./base');
 const TerserPlugin = require('terser-webpack-plugin');
 
-module.exports = merge(base, {
+module.exports = merge.strategy({
+  'plugins': 'replace'
+})(base, {
   mode: 'production',
   optimization: {
     minimizer: [
@@ -15,5 +17,10 @@ module.exports = merge(base, {
         }
       })
     ]
-  }
+  },
+  plugins: [
+    new webpack.DefinePlugin({
+      DEV: false
+    })
+  ]
 });

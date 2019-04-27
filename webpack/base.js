@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   mode: 'development',
@@ -26,5 +27,10 @@ module.exports = {
     port: 9000,
     open: true,
     host: '127.0.0.1'
-  }
+  },
+  plugins: [
+    new webpack.DefinePlugin({
+      DEV: true
+    })
+  ]
 };

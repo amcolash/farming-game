@@ -8,6 +8,7 @@
     "src/*.ts"
   ],
   "files": [
-    "node_modules/phaser3-docs/typescript/phaser.d.ts"
+    "node_modules/phaser3-docs/typescript/phaser.d.ts",
+    "src/globals.d.ts"
   ]
 }
