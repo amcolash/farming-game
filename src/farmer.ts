@@ -188,6 +188,12 @@ export class Farmer extends Phaser.GameObjects.Container {
               best = empty;
             }
           }
+        } else {
+          const planted = this.getClosestTile(LandState.PLANTED);
+          const score1 = this.getScore(best) * 1.5;
+          const score2 = this.getScore(planted);
+
+          if (score2 < score1) best = planted;
         }
     }
 
@@ -246,14 +252,15 @@ export class Farmer extends Phaser.GameObjects.Container {
   }
 
   getScore(tile: Land) {
-    var score = this.distance(tile);
+    var score = this.distance(tile) + 0.25 * this.spawnDistance(tile);
 
     if (tile.land == LandState.READY) {
-      score = ((score / 400) * score + tile.life * 500 - tile.crop.revenue * 500);
+      score *= 0.15;
+      score += ((score / 400) * score + tile.life * 500 - tile.crop.revenue * 500);
     } else if (tile.land == LandState.PLANTED) {
       score += tile.life * 5000;
     } else {
-      score += this.spawnDistance(tile);
+      score += 0.75 * this.spawnDistance(tile);
     }
 
     // Add random to try and prevent duplicate scores
