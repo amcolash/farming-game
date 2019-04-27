@@ -20,7 +20,7 @@ module.exports = merge.strategy({
   },
   plugins: [
     new webpack.DefinePlugin({
-      DEV: false
+      __DEV__: false
     })
   ]
 });

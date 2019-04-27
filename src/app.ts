@@ -31,7 +31,7 @@ export class FarmingGame extends Phaser.Game {
     // Set up game data
     this.registry.set('currentCrop', 0);
     this.registry.set('gameTime', 0);
-    this.registry.set('money', DEV ? 300000 : 300);
+    this.registry.set('money', __DEV__ ? 300000 : 300);
     this.registry.set('profit', 0);
     this.registry.set('stats', new Array(Crops.length).fill(0));
 

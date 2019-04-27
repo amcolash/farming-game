@@ -1,1 +1,1 @@
-declare const DEV: boolean;
+declare const __DEV__: boolean;

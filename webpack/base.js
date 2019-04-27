@@ -30,7 +30,7 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      DEV: true
+      __DEV__: true
     })
   ]
 };

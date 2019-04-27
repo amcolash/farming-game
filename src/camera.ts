@@ -27,11 +27,11 @@ export class Camera extends Phaser.Physics.Arcade.Image {
 
     const width = Number.parseInt(scene.game.config.width.toString());
     const height = Number.parseInt(scene.game.config.height.toString());
-    this.daynight = new DayNight(scene, 0, 0, width, height);
+    if (!__DEV__) this.daynight = new DayNight(scene, 0, 0, width * 4, height * 4);
   }
 
   update() {
-    this.daynight.update(this.x, this.y);
+    if (this.daynight) this.daynight.update(this.x, this.y);
     this.setVelocity(0);
     
     const up = this.cursors.up.isDown;
