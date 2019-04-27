@@ -13,6 +13,7 @@ export class Farmer extends Phaser.GameObjects.Container {
   spawnLocation: Phaser.Math.Vector2;
   stats: FarmerStats;
   registry: Phaser.Data.DataManager;
+  ring: Phaser.GameObjects.Image;
   wait: number;
   world: Phaser.Physics.Arcade.World;
 
@@ -23,7 +24,7 @@ export class Farmer extends Phaser.GameObjects.Container {
     if (!Farmer.ringTexture) {
       this.generateTexture();
     }
-    scene.add.image(x, y, 'gradient').setScale(2, 2).setAlpha(0.6).setBlendMode(Phaser.BlendModes.OVERLAY);
+    this.ring = scene.add.image(x, y, 'gradient').setScale(2, 2).setAlpha(0).setBlendMode(Phaser.BlendModes.OVERLAY);
 
     scene.add.existing(this);
     scene.physics.add.existing(this);
@@ -43,8 +44,10 @@ export class Farmer extends Phaser.GameObjects.Container {
     scene.game.events.on('hoverFarmer', (farmer) => {
       if (farmer === this) {
         sprite.setTint(0xaaaaff);
+        this.ring.setAlpha(0.6);
       } else {
         sprite.setTint(0xffffff);
+        this.ring.setAlpha(0);
       }
     });
 
@@ -264,7 +267,7 @@ export class Farmer extends Phaser.GameObjects.Container {
     context.beginPath();
     context.arc(128, 128, 90, 0, 2 * Math.PI, false);
     context.lineWidth = 3;
-    context.strokeStyle = '#009900';
+    context.strokeStyle = '#0099bb';
     context.stroke();
 
     //  Call this if running under WebGL, or you'll see nothing change
