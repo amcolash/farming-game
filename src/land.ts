@@ -1,4 +1,5 @@
 import { Crop, Crops } from './crops';
+import * as SimplexNoise from 'simplex-noise';
 
 export enum LandState {
   EMPTY,
@@ -11,8 +12,11 @@ export class Land extends Phaser.GameObjects.GameObject {
   // global id counter such that each tile has a unique id
   static idCounter: number = 0;
 
-  // the number of unique update groups
-  static readonly updateGroups: number = 4;
+  // the number of unique update groups, should update each crop 10x per second
+  static readonly updateGroups: number = 6;
+
+  // random simplex generator, shared between all land tiles
+  static simplex = new SimplexNoise(__DEV__ ? 'bring the noise' : Math.random);
 
   registry: Phaser.Data.DataManager;
   world: Phaser.Physics.Arcade.World;
@@ -25,6 +29,7 @@ export class Land extends Phaser.GameObjects.GameObject {
   land: LandState;
   life: number;
   crop: Crop;
+  health: number;
 
   // TODO: Make this a container
   constructor(scene: Phaser.Scene, x: number, y: number) {
@@ -42,6 +47,10 @@ export class Land extends Phaser.GameObjects.GameObject {
     this.sprite.setInteractive({ useHandCursor: true });
     this.sprite.on('pointerdown', this.handleClick.bind(this));
     this.sprite.on('pointerover', () => scene.events.emit('hover', this));
+
+    this.health = Land.simplex.noise2D(x / 256, y / 256);
+    this.health = (((this.health + 1) / 2) * 0.4) + 0.6;
+    this.sprite.setTint(Phaser.Display.Color.GetColor(this.health * 255, this.health * 255, this.health * 255));
 
     // if (x === 0 && y === 0) scene.add.rectangle(x, y, 32, 32).setStrokeStyle(1, 0xff0000, 0.75);
     this.bar = scene.add.rectangle(x - 16, y - 16, 0, 2, 0x00ee00);
@@ -86,6 +95,13 @@ export class Land extends Phaser.GameObjects.GameObject {
         }
       }
     }
+
+    if (this.land == LandState.EMPTY) {
+      this.health = Math.min(1, this.health + (delta / 8000000) * (1 / this.world.timeScale));
+    } else {
+      this.health = Math.max(0.6, this.health - (delta / 2000000) * (1 / this.world.timeScale));
+    }
+    this.sprite.setTint(Phaser.Display.Color.GetColor(this.health * 255, this.health * 255, this.health * 255));
   }
 
   updateTile() {
@@ -166,7 +182,9 @@ export class Land extends Phaser.GameObjects.GameObject {
   harvest(): void {
     const money = this.registry.get('money');
     // You can get up to 115% of a crop value if harvested immediately, at a minimum you get 75% of value as it dies
-    const revenue = Math.floor(this.crop.revenue * 0.75 + this.crop.revenue * (1 - (-this.life / this.crop.timeToDeath)) * 0.4);
+    let revenue = Math.floor(this.crop.revenue * 0.75 + this.crop.revenue * (1 - (-this.life / this.crop.timeToDeath)) * 0.4);
+    // Reduce value of crop based on land health. Health can decrease value by up to 20%
+    revenue = (0.8 * revenue) + (0.2 * revenue * this.health);
     this.registry.set('money', money + revenue);
     this.registry.set('profit', this.registry.get('profit') + this.crop.revenue - this.crop.cost - 5);
     this.registry.values.stats[this.crop.frame]++;

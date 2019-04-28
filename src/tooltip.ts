@@ -37,6 +37,7 @@ export class Tooltip extends Phaser.GameObjects.Container {
   update() {
     if (this.current && this.current.land != LandState.EMPTY ) {
       var t = 'State: ' + LandState[this.current.land];
+      t += '\nHealth: ' + this.current.health.toFixed(2);
       if (this.current.crop) {
         t += '\nCrop: ' + this.current.crop.name;
         if (this.current.life > 0) t += '\nTo Ripe: ' + this.current.life.toFixed(0) + 's';

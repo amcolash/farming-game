@@ -261,6 +261,9 @@ export class Farmer extends Phaser.GameObjects.Container {
       score += tile.life * 5000;
     } else {
       score += 0.75 * this.spawnDistance(tile);
+      score += tile.health * 10000;
+      if (tile.health < 0.85) score *= 3;
+      if (tile.health < 0.7) score *= 3;
     }
 
     // Add random to try and prevent duplicate scores

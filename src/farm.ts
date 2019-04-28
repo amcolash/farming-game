@@ -57,7 +57,7 @@ export class Farm extends Phaser.GameObjects.GameObject {
     this.glass.input.enabled = false;
     this.glass.on('pointerdown', this.glassDown.bind(this));
 
-    scene.add.grid(-this.tileSize / 2, -this.tileSize / 2, width, height, this.tileSize, this.tileSize, 0x000000, 0, 0xffffff, 0.1);
+    scene.add.grid(-this.tileSize / 2, -this.tileSize / 2, width, height, this.tileSize, this.tileSize, 0x000000, 0, 0xffffff, 0.05);
 
     scene.events.addListener('tileUpdate', (tile: Land) => this.tileUpdated(tile));
     scene.events.on('hover', tile => { this.hover.alpha = 0.2; this.hover.setPosition(tile.sprite.x, tile.sprite.y); });
@@ -89,6 +89,7 @@ export class Farm extends Phaser.GameObjects.GameObject {
   }
 
   update(time: number, delta: number): void {
+    this.empty.entries.forEach(t => t.update(time, delta));
     this.plowed.entries.forEach(t => t.update(time, delta));
     this.planted.entries.forEach(t => t.update(time, delta));
     this.ready.entries.forEach(t => t.update(time, delta));

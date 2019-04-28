@@ -26,6 +26,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "moment": "^2.24.0",
-    "phaser": "^3.16.2"
+    "phaser": "^3.16.2",
+    "simplex-noise": "^2.4.0"
   }
 }
