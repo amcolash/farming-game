@@ -17,7 +17,7 @@ export class Camera extends Phaser.Physics.Arcade.Image {
     this.cursors = scene.input.keyboard.createCursorKeys();
     this.camera = scene.cameras.main;
     this.camera.startFollow(this, true, 0.1, 0.1);
-    if (!__DEV__) this.camera.setZoom(1.3);
+    this.camera.setZoom(__DEV__ ? 0.7 : 1.3);
 
     this.setCollideWorldBounds(true);
 
