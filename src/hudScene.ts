@@ -2,9 +2,8 @@ import { Crops } from './crops';
 import { TextButton } from './textButton';
 import { FarmScene } from './farmScene';
 import { Util } from './util';
-import { Farmer } from './farmer';
-import { FarmerType } from './farmerData';
-import { CursorMode } from './farm';
+import { ToggleStats } from './toggleStats';
+import { ToggleFarmers } from './toggleFarmers';
 
 export class HUDScene extends Phaser.Scene {
   isShop: boolean = false;
@@ -23,13 +22,8 @@ export class HUDScene extends Phaser.Scene {
   speed: Phaser.GameObjects.Text;
   value: Phaser.GameObjects.Text;
 
-  stats: Phaser.GameObjects.Container;
-  bars: Phaser.GameObjects.Rectangle[];
-  statListTarget: number;
-  
-  farmers: Phaser.GameObjects.Container;
-  farmerList: Phaser.GameObjects.Container;
-  farmListTarget: number;
+  stats: ToggleStats;
+  farmers: ToggleFarmers;
 
   constructor() {
     super('HUDScene');
@@ -69,54 +63,9 @@ export class HUDScene extends Phaser.Scene {
     this.game.events.addListener('speedValue', value => this.speed.setText('Speed: ' + value));
     this.value = this.add.text(20, this.height - 50, 'Farm Value: $0');
 
-    this.stats = this.add.container(-200, this.height - 124);
-    const statsBackground = new Phaser.GameObjects.Rectangle(this, 0, 22, 200, 115, 0x000000, 0.35).setOrigin(0, 1);
-    statsBackground.setInteractive().on('pointerover', () => this.game.events.emit('clearHover'));
-    this.stats.add(statsBackground);
-    
-    const statsToggle = new Phaser.GameObjects.Rectangle(this, 200, 0, 42, 44, 0x000000, 0.35).setOrigin(0, 0.5);
-    statsToggle.setInteractive({ useHandCursor: true });
-    statsToggle.on('pointerdown', this.toggleStats.bind(this));
-    statsToggle.on('pointerover', () => this.game.events.emit('clearHover'));
-    this.stats.add(statsToggle);
-    this.stats.add(new Phaser.GameObjects.Sprite(this, 204, 1, 'crops', 20).setOrigin(0, 0.5));
-    this.statListTarget = -200;
-
-    this.bars = [];
-    const sorted = Crops.sort((a, b) => { return a.frame - b.frame });
-    for (var i = 0; i < sorted.length; i++) {
-      const crop = sorted[i];
-      
-      const sprite = new Phaser.GameObjects.Sprite(this, i * 32 + 20, 0, 'crops', crop.frame);
-      this.stats.add(sprite);
-
-      const bar = new Phaser.GameObjects.Rectangle(this, i * 32 + 20, -50, 8, 50, 0xcccccc);
-      bar.setAngle(180);
-      this.bars.push(bar);
-      this.stats.add(bar);
-    }
-
-    this.farmScene = (this.game.scene.getScene('FarmScene') as FarmScene);
-    this.farmers = this.add.container(this.width, 0);
-    this.farmerList = this.add.container(0, 0);
-    this.farmListTarget = this.width;
-
-    const farmerToggle = new Phaser.GameObjects.Rectangle(this, -42, this.height - 102, 42, 44, 0x000000, 0.5).setOrigin(0, 1);
-    farmerToggle.setInteractive({ useHandCursor: true });
-    farmerToggle.on('pointerdown', this.toggleFarmers.bind(this));
-    farmerToggle.on('pointerover', () => this.game.events.emit('clearHover'));
-    
-    const rectangle = new Phaser.GameObjects.Rectangle(this, 0, 0, 175, this.height - 102, 0x000000, 0.5).setOrigin(0);
-    rectangle.setInteractive();
-    rectangle.on('pointerover', () => this.game.events.emit('clearHover'));
-    
-    this.farmers.add(rectangle);
-    this.farmers.add(this.farmerList);
-    this.farmers.add(farmerToggle);
-    this.farmers.add(new Phaser.GameObjects.Sprite(this, -36, this.height - 142, 'farmer_a', 0).setOrigin(0).setAlpha(0.85));
-    
-    this.getFarmers();
-    this.game.events.on('farmerUpdate', this.getFarmers.bind(this));
+    this.stats = new ToggleStats(this, this.width, this.height, this.toggleStats.bind(this));
+    this.farmers = new ToggleFarmers(this, this.width, this.height, this.toggleFarmers.bind(this));
+    this.farmScene = this.game.scene.getScene('FarmScene') as FarmScene;
   }
 
   update(time: number, delta: number): void {
@@ -130,61 +79,19 @@ export class HUDScene extends Phaser.Scene {
     this.farmers.visible = !this.isShop;
 
     if (!this.isShop) {
-      this.farmers.x = Util.lerpTowards(this.farmers.x, this.farmListTarget, delta * 0.7);
-      this.stats.x = Util.lerpTowards(this.stats.x, this.statListTarget, delta * 0.7);
-      
-      const stats = this.registry.get('stats');
-      const total = stats.reduce((a, v) => { return a + v; });
-      for (var i = 0; i < Crops.length; i++) {
-        if (total === 0) this.bars[i].height = 2;
-        else this.bars[i].height = 2 + 47 * (stats[i] / total);
-      }
+      this.farmers.update(time, delta);
+      this.stats.update(time, delta);
     }
   }
 
   toggleFarmers(): void {
-    if (this.farmListTarget === this.width) {
-      this.farmListTarget = this.width - 175;
-      this.statListTarget = -200;
-    } else {
-      this.farmListTarget = this.width;
-    }
+    this.farmers.toggle();
+    this.stats.close();
   }
 
   toggleStats(): void {
-    if (this.statListTarget === 0) {
-      this.statListTarget = -200;
-    } else {
-      this.statListTarget = 0;
-      this.farmListTarget = this.width;
-    }
-  }
-
-  getFarmers(): void {
-    const farmers = this.farmScene.farmers;
-    this.farmerList.removeAll();
-    for (var i = 0; i < farmers.length; i++) {
-      const farmer = farmers[i];
-      const sprite = new Phaser.GameObjects.Sprite(this, 10, 10 + i * 60, Farmer.getSprite(farmer.farmerType), 0).setOrigin(0);
-      const text = new Phaser.GameObjects.Text(this, 46, 10 + i * 60, farmer.stats.name + '\n(' + Util.titleCase(FarmerType[farmer.farmerType]) + ')', { fontSize: 18 }).setOrigin(0);
-      this.farmerList.add(sprite);
-      this.farmerList.add(text);
-
-      sprite.setInteractive({ useHandCursor: true })
-        .on('pointerover', () => this.game.events.emit('hoverFarmer', farmer))
-        .on('pointerout', () => { if (this.farmScene.farm.cursorMode != CursorMode.FARMER) this.game.events.emit('hoverFarmer', null); })
-        .on('pointerdown', this.selectFarmer.bind(this, farmer));
-
-      text.setInteractive({ useHandCursor: true })
-        .on('pointerover', () => this.game.events.emit('hoverFarmer', farmer))
-        .on('pointerout', () => { if (this.farmScene.farm.cursorMode != CursorMode.FARMER) this.game.events.emit('hoverFarmer', null); })
-        .on('pointerdown', this.selectFarmer.bind(this, farmer));
-    }
-  }
-
-  selectFarmer(farmer: Farmer): void {
-    this.toggleFarmers();
-    this.farmScene.farm.setCursorMode(CursorMode.FARMER, farmer);
+    this.stats.toggle();
+    this.farmers.close();
   }
 
   getFarmValue(): number {

@@ -18,7 +18,7 @@ export class Util {
   }
 
   static numberWithCommas(x: number): string {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return x.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
   static titleCase(str: string): string {
