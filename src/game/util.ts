@@ -1,5 +1,3 @@
-import * as moment from 'moment';
-
 export class Util {
   static getTime(ms: number): string {
     const sec = ms / 1000;
@@ -13,8 +11,14 @@ export class Util {
     return day.toFixed(1) + 'd';
   }
 
+  static readonly months: string[] = ['Jan', 'Feb', 'Mar', 'Apr', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
   static getDate(ms: number): string {
-    return moment(ms).utc().format('MMM D, h:mmA');
+    const date = new Date(ms);
+    let am = date.getUTCHours() < 12 ? 'am' : 'pm'
+    let min = date.getUTCMinutes().toString();
+    if (min.length === 1) min = '0' + min;
+    return Util.months[date.getUTCMonth()] + ' ' + date.getUTCDate() + ', ' + date.getUTCHours() + ':' + min + am;
   }
 
   static numberWithCommas(x: number): string {

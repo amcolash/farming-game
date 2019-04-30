@@ -12,8 +12,8 @@ export class Land extends Phaser.GameObjects.GameObject {
   // global id counter such that each tile has a unique id
   static idCounter: number = 0;
 
-  // the number of unique update groups, should update each crop 10x per second
-  static readonly updateGroups: number = 6;
+  // the number of unique update groups, should update each crop 4x per "simulated second"
+  static readonly updateGroups: number = 15;
 
   // random simplex generator, shared between all land tiles
   static simplex = new SimplexNoise(__DEV__ ? 'bring the noise' : Math.random);

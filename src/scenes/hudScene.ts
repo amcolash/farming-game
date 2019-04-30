@@ -70,10 +70,12 @@ export class HUDScene extends Phaser.Scene {
 
   update(time: number, delta: number): void {
     this.crop.setFrame(Crops[this.registry.get('currentCrop')].frame);
-    this.gameTime.setText(Util.getDate(this.registry.get('gameTime')));
     this.money.setText('$' + Util.numberWithCommas(this.registry.get('money')));
     this.profit.setText('Profit: $' + Util.numberWithCommas(this.registry.get('profit')));
     this.value.setText('Farm Value: $' + Util.numberWithCommas(this.getFarmValue()));
+
+    const currentTime = this.registry.get('gameTime');
+    if (new Date(currentTime).getUTCMinutes() % 5 === 0) this.gameTime.setText(Util.getDate(currentTime));
 
     this.stats.visible = !this.isShop;
     this.farmers.visible = !this.isShop;

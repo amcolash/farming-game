@@ -63,7 +63,7 @@ export class FarmScene extends Phaser.Scene {
       this.farmers.forEach(farmer => farmer.update(time, delta));
     }
 
-    this.frustumCull();
+    // this.frustumCull(); // This seems to be VERY expensive, disabled for now...
   }
 
   // Frustum culling from: https://github.com/photonstorm/phaser/issues/4092
