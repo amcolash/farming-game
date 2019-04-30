@@ -8,6 +8,7 @@ import { HUDScene } from './scenes/hudScene';
 import { LoadingScene } from './scenes/loadingScene';
 import { ShopScene } from './scenes/shopScene';
 import { GrayscalePipeline } from "./shaders/grayscalePipeline";
+import { MinimapScene } from "./scenes/minimapScene";
 
 const config: GameConfig = {
   title: 'Farming Game',
@@ -15,7 +16,7 @@ const config: GameConfig = {
   height: 720,
   parent: 'game',
   backgroundColor: '#000000',
-  scene: [LoadingScene, FarmScene, HUDScene, ShopScene],
+  scene: [LoadingScene, FarmScene, MinimapScene, HUDScene, ShopScene],
   physics: {
     default: 'arcade',
     arcade: {

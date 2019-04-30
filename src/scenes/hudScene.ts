@@ -102,8 +102,16 @@ export class HUDScene extends Phaser.Scene {
   }
 
   toggleShop(): void {
-    this.scene.sleep(this.isShop ? 'ShopScene' : 'FarmScene');
-    this.scene.run(this.isShop ? 'FarmScene' : 'ShopScene');
+    if (this.isShop) {
+      this.scene.run('FarmScene');
+      this.scene.run('MinimapScene');
+      this.scene.sleep('ShopScene');
+    } else {
+      this.scene.sleep('FarmScene');
+      this.scene.sleep('MinimapScene');
+      this.scene.run('ShopScene');
+    }
+    
     this.isShop = !this.isShop;
     this.button.setText(this.isShop ? 'Back' : 'Shop');
   }

@@ -7,9 +7,9 @@ export enum CursorMode {
 }
 
 export class Farm extends Phaser.GameObjects.GameObject {
-  readonly dimensionX: number = 10;
-  readonly dimensionY: number = 10;
-  readonly tileSize: number = 32;
+  static readonly dimensionX: number = 10;
+  static readonly dimensionY: number = 10;
+  static readonly tileSize: number = 32;
 
   farm: Land[][];
 
@@ -26,10 +26,10 @@ export class Farm extends Phaser.GameObjects.GameObject {
   constructor(scene: Phaser.Scene) {
     super(scene, 'farm');
 
-    const xPos = -this.dimensionX * this.tileSize - (this.tileSize / 2);
-    const yPos = -this.dimensionY * this.tileSize - (this.tileSize / 2);
-    const width = this.dimensionX * 2 * this.tileSize;
-    const height = this.dimensionY * 2 * this.tileSize;
+    const xPos = -Farm.dimensionX * Farm.tileSize - (Farm.tileSize / 2);
+    const yPos = -Farm.dimensionY * Farm.tileSize - (Farm.tileSize / 2);
+    const width = Farm.dimensionX * 2 * Farm.tileSize;
+    const height = Farm.dimensionY * 2 * Farm.tileSize;
 
     this.scene.physics.world.setBounds(xPos, yPos, width, height);
 
@@ -40,15 +40,15 @@ export class Farm extends Phaser.GameObjects.GameObject {
 
     this.farm = [];
 
-    for (var x = -this.dimensionX; x < this.dimensionX; x++) {
-      this.farm[x + this.dimensionX] = [];
-      for (var y = -this.dimensionY; y < this.dimensionY; y++) {
-        const offsetX = x * this.tileSize;
-        const offsetY = y * this.tileSize;
+    for (var x = -Farm.dimensionX; x < Farm.dimensionX; x++) {
+      this.farm[x + Farm.dimensionX] = [];
+      for (var y = -Farm.dimensionY; y < Farm.dimensionY; y++) {
+        const offsetX = x * Farm.tileSize;
+        const offsetY = y * Farm.tileSize;
 
         const tile = new Land(scene, offsetX, offsetY);
         this.empty.set(tile);
-        this.farm[x + this.dimensionX][y + this.dimensionY] = tile;
+        this.farm[x + Farm.dimensionX][y + Farm.dimensionY] = tile;
       }
     }
 
@@ -57,7 +57,7 @@ export class Farm extends Phaser.GameObjects.GameObject {
     this.glass.input.enabled = false;
     this.glass.on('pointerdown', this.glassDown.bind(this));
 
-    scene.add.grid(-this.tileSize / 2, -this.tileSize / 2, width, height, this.tileSize, this.tileSize, 0x000000, 0, 0xffffff, 0.05);
+    scene.add.grid(-Farm.tileSize / 2, -Farm.tileSize / 2, width, height, Farm.tileSize, Farm.tileSize, 0x000000, 0, 0xffffff, 0.05);
 
     scene.events.addListener('tileUpdate', (tile: Land) => this.tileUpdated(tile));
     scene.events.on('hover', tile => { this.hover.alpha = 0.2; this.hover.setPosition(tile.sprite.x, tile.sprite.y); });
@@ -96,8 +96,8 @@ export class Farm extends Phaser.GameObjects.GameObject {
   }
 
   glassDown(event) {
-    const x = Math.floor(event.worldX / this.tileSize) * this.tileSize;
-    const y = Math.floor(event.worldY / this.tileSize) * this.tileSize;
+    const x = Math.floor(event.worldX / Farm.tileSize) * Farm.tileSize;
+    const y = Math.floor(event.worldY / Farm.tileSize) * Farm.tileSize;
     this.selectedFarmer.updateSpawnLocation(x, y);
     this.glass.input.enabled = false;
     this.setCursorMode(CursorMode.CROP);

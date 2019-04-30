@@ -22,6 +22,7 @@ export class LoadingScene extends Phaser.Scene {
 
     this.load.on('complete', () => {
       this.scene.start('FarmScene');
+      this.scene.start('MinimapScene');
       this.scene.start('HUDScene');
     });
   }
