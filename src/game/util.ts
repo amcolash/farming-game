@@ -15,10 +15,16 @@ export class Util {
 
   static getDate(ms: number): string {
     const date = new Date(ms);
-    let am = date.getUTCHours() < 12 ? 'am' : 'pm'
+    
+    let hour = date.getUTCHours();
+    let am = hour < 12 ? 'am' : 'pm';
+    if (hour == 0) hour = 12;
+    if (hour > 12) hour -= 12;
+
     let min = date.getUTCMinutes().toString();
     if (min.length === 1) min = '0' + min;
-    return Util.months[date.getUTCMonth()] + ' ' + date.getUTCDate() + ', ' + date.getUTCHours() + ':' + min + am;
+    
+    return Util.months[date.getUTCMonth()] + ' ' + date.getUTCDate() + ', ' + hour + ':' + min + am;
   }
 
   static numberWithCommas(x: number): string {
