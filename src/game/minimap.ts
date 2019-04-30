@@ -15,6 +15,8 @@ export class Minimap extends Phaser.GameObjects.Container {
     this.farmScene = farmScene;
     this.farm = farmScene.farm.farm;
 
+    this.add(new Phaser.GameObjects.Rectangle(this.scene, Farm.dimensionX * Farm.tileSize, Farm.dimensionY * Farm.tileSize, Farm.dimensionX * 2 * Farm.tileSize, Farm.dimensionY * 2 * Farm.tileSize, 0x666666));
+
     this.rectangles = [];
     for (var x = 0; x < this.farm.length; x++) {
       const column = this.farm[x];
@@ -35,7 +37,14 @@ export class Minimap extends Phaser.GameObjects.Container {
       const column = this.farm[x];
       for (var y = 0; y < column.length; y++) {
         const tile = column[y];
-        this.rectangles[x][y].fillColor = this.getColor(tile);
+        if (tile.land == LandState.EMPTY) {
+          this.rectangles[x][y].setVisible(false);
+        } else {
+          this.rectangles[x][y].setVisible(true);
+          if (this.rectangles[x][y].fillColor !== this.getColor(tile)) {
+            this.rectangles[x][y].setFillStyle(this.getColor(tile));
+          }
+        }
       }
     }
 
