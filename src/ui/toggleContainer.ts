@@ -1,4 +1,4 @@
-import { Util } from "./util";
+import { Util } from "../game/util";
 
 export class ToggleContainer extends Phaser.GameObjects.Container {
   CLOSED: number;

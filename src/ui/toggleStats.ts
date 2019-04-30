@@ -1,5 +1,5 @@
 import { ToggleContainer } from "./toggleContainer";
-import { Crops } from "./crops";
+import { Crops } from "../data/crops";
 
 export class ToggleStats extends ToggleContainer {
   bars: Phaser.GameObjects.Rectangle[];

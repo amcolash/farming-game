@@ -1,7 +1,7 @@
-import { Crop, Crops } from './crops';
+import { Crop, Crops } from '../data/crops';
 import { Farm } from './farm';
 import { Land, LandState } from './land';
-import { FarmerType, FarmerStats, FarmerBaseStats } from './farmerData';
+import { FarmerType, FarmerStats, FarmerBaseStats } from '../data/farmerData';
 
 export class Farmer extends Phaser.GameObjects.Container {
   static ringTexture: Phaser.Textures.CanvasTexture;

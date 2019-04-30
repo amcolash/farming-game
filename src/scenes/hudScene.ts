@@ -1,9 +1,9 @@
-import { Crops } from './crops';
-import { TextButton } from './textButton';
+import { Crops } from '../data/crops';
+import { TextButton } from '../ui/textButton';
 import { FarmScene } from './farmScene';
-import { Util } from './util';
-import { ToggleStats } from './toggleStats';
-import { ToggleFarmers } from './toggleFarmers';
+import { Util } from '../game/util';
+import { ToggleStats } from '../ui/toggleStats';
+import { ToggleFarmers } from '../ui/toggleFarmers';
 
 export class HUDScene extends Phaser.Scene {
   isShop: boolean = false;

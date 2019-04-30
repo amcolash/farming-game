@@ -2,11 +2,11 @@ import "phaser";
 import axios from "axios";
 import * as moment from "moment";
 
-import { Crops } from './crops';
-import { FarmScene } from './farmScene';
-import { HUDScene } from './hudScene';
-import { LoadingScene } from './loadingScene';
-import { ShopScene } from './shopScene';
+import { Crops } from './data/crops';
+import { FarmScene } from './scenes/farmScene';
+import { HUDScene } from './scenes/hudScene';
+import { LoadingScene } from './scenes/loadingScene';
+import { ShopScene } from './scenes/shopScene';
 import { GrayscalePipeline } from "./shaders/grayscalePipeline";
 
 const config: GameConfig = {

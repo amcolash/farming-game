@@ -1,4 +1,4 @@
-import { Shop } from './shop';
+import { Shop } from '../shop/shop';
 
 export class ShopScene extends Phaser.Scene {
   constructor() {

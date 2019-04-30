@@ -1,9 +1,9 @@
 import { ToggleContainer } from "./toggleContainer";
-import { FarmScene } from "./farmScene";
-import { CursorMode } from "./farm";
-import { Farmer } from "./farmer";
-import { Util } from "./util";
-import { FarmerType } from "./farmerData";
+import { FarmScene } from "../scenes/farmScene";
+import { CursorMode } from "../farm/farm";
+import { Farmer } from "../farm/farmer";
+import { Util } from "../game/util";
+import { FarmerType } from "../data/farmerData";
 
 export class ToggleFarmers extends ToggleContainer {
   farmerList: Phaser.GameObjects.Container;

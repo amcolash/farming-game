@@ -1,5 +1,5 @@
 import { Names } from "./names";
-import { Farmer } from "./farmer";
+import { Farmer } from "../farm/farmer";
 
 export class FarmerBaseStats {
   static readonly PlowSpeed: number = 600;

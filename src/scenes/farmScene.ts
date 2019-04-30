@@ -1,9 +1,8 @@
-import { Camera } from './camera';
-import { Farm } from './farm';
-import { Farmer } from './farmer';
-import { Tooltip } from './tooltip';
-import { FarmerType } from './farmerData';
-import { DayNight } from './daynight';
+import { Camera } from '../game/camera';
+import { Farm } from '../farm/farm';
+import { Farmer } from '../farm/farmer';
+import { Tooltip } from '../ui/tooltip';
+import { FarmerType } from '../data/farmerData';
 
 export class FarmScene extends Phaser.Scene {
   paused: boolean = false;
@@ -29,7 +28,7 @@ export class FarmScene extends Phaser.Scene {
     }
     
     this.tooltip = new Tooltip(this);
-    this.camera = new Camera(this, 0, 0);
+    this.camera = new Camera(this, __DEV__ ? -16 : 0, __DEV__ ? 64 : 0);
     
     // There is an issue with this, see: https://github.com/photonstorm/phaser/issues/4405
     // this.input.setPollAlways();

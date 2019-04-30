@@ -1,11 +1,11 @@
-import { Crops } from './crops';
-import { HUDScene } from './hudScene';
-import { TextButton } from './textButton';
-import { Farmer } from './farmer';
-import { FarmScene } from './farmScene';
-import { Util } from './util';
-import { Farmers, FarmerType } from './farmerData';
-import { CursorMode } from './farm';
+import { Crops } from '../data/crops';
+import { HUDScene } from '../scenes/hudScene';
+import { TextButton } from '../ui/textButton';
+import { Farmer } from '../farm/farmer';
+import { FarmScene } from '../scenes/farmScene';
+import { Util } from '../game/util';
+import { Farmers, FarmerType } from '../data/farmerData';
+import { CursorMode } from '../farm/farm';
 
 export class Shop extends Phaser.GameObjects.GameObject {
   crops: Phaser.GameObjects.Container;

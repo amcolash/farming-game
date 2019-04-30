@@ -1,4 +1,4 @@
-import { Crop, Crops } from './crops';
+import { Crop, Crops } from '../data/crops';
 import * as SimplexNoise from 'simplex-noise';
 
 export enum LandState {

@@ -1,6 +1,6 @@
-import { Land, LandState } from './land';
-import { Util } from './util';
-import { FarmScene } from './farmScene';
+import { Land, LandState } from '../farm/land';
+import { Util } from '../game/util';
+import { FarmScene } from '../scenes/farmScene';
 
 export class Tooltip extends Phaser.GameObjects.Container {
   current: Land;
