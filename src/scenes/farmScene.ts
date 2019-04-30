@@ -63,7 +63,7 @@ export class FarmScene extends Phaser.Scene {
       this.farmers.forEach(farmer => farmer.update(time, delta));
     }
 
-    // this.frustumCull(); // This seems to be VERY expensive, disabled for now...
+    this.frustumCull(); // This seems to be VERY expensive, bare minimum alpha check for now...
   }
 
   // Frustum culling from: https://github.com/photonstorm/phaser/issues/4092
@@ -71,11 +71,31 @@ export class FarmScene extends Phaser.Scene {
     let children = this.children.getChildren();
 
     for (let child of children)
-      (child as any).visible = false;
-
-    let visible = this.cameras.main.cull(children);
-    
-    for (let child of visible)
       (child as any).visible = (child as any).alpha > 0;
+
+    // My attempt at getting things a bit quicker, though not much different
+
+    // let camCenterX = this.controllableCamera.x;
+    // let camCenterY = this.controllableCamera.y;
+    // let offset = 350 / this.cameras.main.zoom;
+
+    // let hidden = 0;
+    // children.forEach(child => {
+    //   let c = child as any; // nasty cast
+    //   let visible = c.x > camCenterX - offset && c.x < camCenterX + offset &&
+    //     c.y > camCenterY - offset && c.y < camCenterY + offset;
+    //   c.setVisible(visible && c.alpha > 0);
+    //   hidden += c.visible ? 0 : 1;
+    // });
+
+    // Original way of doing it
+
+    // for (let child of children)
+    //   (child as any).visible = false;
+
+    // let visible = this.cameras.main.cull(children);
+    
+    // for (let child of visible)
+    //   (child as any).visible = (child as any).alpha > 0;
   }
 }
