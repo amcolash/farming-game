@@ -5,7 +5,7 @@
     "target": "es6",
   },
   "include": [
-    "src/*.ts"
+    "src/**/*.ts"
   ],
   "files": [
     "node_modules/phaser3-docs/typescript/phaser.d.ts",
