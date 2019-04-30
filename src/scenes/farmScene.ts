@@ -1,4 +1,4 @@
-import { Camera } from '../game/camera';
+import { ControllableCamera } from '../game/controllableCamera';
 import { Farm } from '../farm/farm';
 import { Farmer } from '../farm/farmer';
 import { Tooltip } from '../ui/tooltip';
@@ -6,7 +6,7 @@ import { FarmerType } from '../data/farmerData';
 
 export class FarmScene extends Phaser.Scene {
   paused: boolean = false;
-  camera: Camera;
+  controllableCamera: ControllableCamera;
   farm: Farm;
   farmers: Farmer[] = [];
   tooltip: Tooltip;
@@ -28,7 +28,7 @@ export class FarmScene extends Phaser.Scene {
     }
     
     this.tooltip = new Tooltip(this);
-    this.camera = new Camera(this, __DEV__ ? -16 : 0, __DEV__ ? 64 : 0);
+    this.controllableCamera = new ControllableCamera(this, __DEV__ ? -16 : 0, __DEV__ ? 64 : 0);
     
     // There is an issue with this, see: https://github.com/photonstorm/phaser/issues/4405
     // this.input.setPollAlways();
@@ -54,7 +54,7 @@ export class FarmScene extends Phaser.Scene {
 
     this.game.registry.set('gameTime', this.game.registry.get('gameTime') + delta * (1 / this.physics.world.timeScale) * 500);
 
-    this.camera.update();
+    this.controllableCamera.update();
     this.tooltip.update();
     
     // Actual game objects go inside
