@@ -12,7 +12,7 @@ export class MinimapScene extends Phaser.Scene {
   create(): void {
     this.farmScene = this.game.scene.getScene('FarmScene') as FarmScene;
     
-    const squareDimensions = 96;
+    const squareDimensions = 128;
     new Minimap(this, this.farmScene, squareDimensions);
     this.cameras.main.setViewport(8, 8, squareDimensions, squareDimensions);
   }
