@@ -1,6 +1,5 @@
 import { Land, LandState } from '../farm/land';
 import { Util } from '../game/util';
-import { FarmScene } from '../scenes/farmScene';
 
 export class Tooltip extends Phaser.GameObjects.Container {
   current: Land;
@@ -15,7 +14,7 @@ export class Tooltip extends Phaser.GameObjects.Container {
     this.info = new Phaser.GameObjects.Container(this.scene, -16, -32);
     this.add(this.info);
 
-    this.text = new Phaser.GameObjects.Text(this.scene, 0, 12, '', { fontSize: 12 }).setOrigin(0, 1);
+    this.text = new Phaser.GameObjects.Text(this.scene, 0, 12, '', { fontSize: '12px' }).setOrigin(0, 1);
     this.text.setBackgroundColor('rgba(0,0,0,0.5)');
     this.text.setPadding(4, 6, 4, 6);
     this.info.add(this.text);

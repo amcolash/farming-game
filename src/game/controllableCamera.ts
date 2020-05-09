@@ -2,7 +2,7 @@ import { DayNight } from "./daynight";
 
 export class ControllableCamera extends Phaser.Physics.Arcade.Image {
   camera: Phaser.Cameras.Scene2D.Camera;
-  cursors: Phaser.Input.Keyboard.CursorKeys;
+  cursors: Phaser.Types.Input.Keyboard.CursorKeys;
   readonly speed: number = 300;
   world: Phaser.Physics.Arcade.World;
 

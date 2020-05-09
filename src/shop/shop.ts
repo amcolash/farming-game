@@ -70,7 +70,7 @@ export class Shop extends Phaser.GameObjects.GameObject {
       this.crops.add(sprite);
       
       const data = crop.name + '(' + crop.timeToRipe + ' days)' + '\ncost: $' + crop.cost.toString() + '\nrevenue: $' + crop.revenue.toString();
-      const text = new Phaser.GameObjects.Text(this.scene, 200, i * 100 + 20, data, { fontSize: 24 });
+      const text = new Phaser.GameObjects.Text(this.scene, 200, i * 100 + 20, data, { fontSize: '24px' });
       this.crops.add(text);
 
       sprite.setInteractive({ useHandCursor: true })
@@ -91,11 +91,11 @@ export class Shop extends Phaser.GameObjects.GameObject {
       if (money < farmer.cost) sprite.setPipeline('grayscale');
       this.farmers.add(sprite);
 
-      const text = new Phaser.GameObjects.Text(this.scene, 200, i * 130 + 20, farmer.text, { fontSize: 20, wordWrap: { width: 280 } });
+      const text = new Phaser.GameObjects.Text(this.scene, 200, i * 130 + 20, farmer.text, { fontSize: '20px', wordWrap: { width: 280 } });
       this.farmers.add(text);
 
       const cost = 'Cost: $' + Util.numberWithCommas(farmer.cost);
-      const price = new Phaser.GameObjects.Text(this.scene, 200, i * 130 + 90, cost, { fontSize: 20, color: money >= farmer.cost ? 'white' : 'red' });
+      const price = new Phaser.GameObjects.Text(this.scene, 200, i * 130 + 90, cost, { fontSize: '20px', color: money >= farmer.cost ? 'white' : 'red' });
       this.farmers.add(price);
 
       if (money >= farmer.cost) {

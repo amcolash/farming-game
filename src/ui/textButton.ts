@@ -2,7 +2,7 @@ export class TextButton extends Phaser.GameObjects.Text {
   selected: boolean = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number, text: string | string[], callback: () => void) {
-    super(scene, x, y, text, { fill: '#0f0', fontSize: 24 });
+    super(scene, x, y, text, { backgroundColor: '#0f0', fontSize: '24px' });
 
     this.setInteractive({ useHandCursor: true });
     this.on('pointerover', () => this.enterButtonHoverState());

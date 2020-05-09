@@ -1,4 +1,4 @@
-import "phaser";
+import 'phaser';
 import axios from "axios";
 import * as moment from "moment";
 
@@ -10,7 +10,7 @@ import { ShopScene } from './scenes/shopScene';
 import { GrayscalePipeline } from "./shaders/grayscalePipeline";
 import { MinimapScene } from "./scenes/minimapScene";
 
-const config: GameConfig = {
+const config: Phaser.Types.Core.GameConfig = {
   title: 'Farming Game',
   width: 480,
   height: 720,
@@ -26,7 +26,7 @@ const config: GameConfig = {
 };
 
 export class FarmingGame extends Phaser.Game {
-  constructor(config: GameConfig) {
+  constructor(config: Phaser.Types.Core.GameConfig) {
     super(config);
 
     // Set up game data

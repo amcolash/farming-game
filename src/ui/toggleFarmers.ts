@@ -40,7 +40,7 @@ export class ToggleFarmers extends ToggleContainer {
     for (var i = 0; i < this.farmScene.farmers.length; i++) {
       const farmer = this.farmScene.farmers[i];
       const sprite = new Phaser.GameObjects.Sprite(this.scene, 10, 10 + i * 60, Farmer.getSprite(farmer.farmerType), 0).setOrigin(0);
-      const text = new Phaser.GameObjects.Text(this.scene, 46, 10 + i * 60, farmer.stats.name + '\n(' + Util.titleCase(FarmerType[farmer.farmerType]) + ')', { fontSize: 18 }).setOrigin(0);
+      const text = new Phaser.GameObjects.Text(this.scene, 46, 10 + i * 60, farmer.stats.name + '\n(' + Util.titleCase(FarmerType[farmer.farmerType]) + ')', { fontSize: '18px' }).setOrigin(0);
       this.farmerList.add(sprite);
       this.farmerList.add(text);
 
