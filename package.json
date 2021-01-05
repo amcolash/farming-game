@@ -24,7 +24,7 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "moment": "^2.25.3",
     "phaser": "^3.23.0",
     "simplex-noise": "^2.4.0"
